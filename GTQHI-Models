@@ -1,0 +1,7 @@
+GTQHI-Models/
+│
+├── cars.js              ← 26車種の管理・生成エンジン
+├── car-details.js       ← 車体の細部
+├── car-materials.js     ← 塗装・ガラス・ライト
+├── car-wheels.js        ← タイヤ・ホイール
+└── README.md
