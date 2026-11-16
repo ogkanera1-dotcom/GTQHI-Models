@@ -6624,50 +6624,78 @@ console.log(
     "GTQHI PART 10: VEHICLE PHYSICS INTEGRATION READY"
 );
 
-GTQHI_RACE.configure({
-    id: "city_circuit",
-    name: "CITY CIRCUIT",
-    laps: 3,
 
-    checkpoints: [
-        { x: 0,   y: 0, z: 100, radius: 12 },
-        { x: 100, y: 0, z: 100, radius: 12 },
-        { x: 100, y: 0, z: 0,   radius: 12 },
-        { x: 0,   y: 0, z: 0,   radius: 12 }
-    ]
-});
+/* =========================================
+   GTQHI RACE SYSTEM - SAFE INTEGRATION
+========================================= */
 
-GTQHI_RACE.start(playerVehicle);
+// レースコース設定
+function GTQHI_SETUP_RACE() {
 
-function animate() {
-    requestAnimationFrame(animate);
+    if (typeof GTQHI_RACE === "undefined") {
+        console.error("GTQHI: RACE SYSTEMが未読み込みです");
+        return false;
+    }
 
-    // 既存の車両更新処理
-    // ...
+    return GTQHI_RACE.configure({
+        id: "city_circuit",
+        name: "CITY CIRCUIT",
+        laps: 3,
 
-    // レース判定
-    GTQHI_RACE.update(playerVehicle);
-
-    // 既存の描画処理
-    // renderer.render(scene, camera);
+        checkpoints: [
+            { x: 0, y: 0, z: 100, radius: 12 },
+            { x: 100, y: 0, z: 100, radius: 12 },
+            { x: 100, y: 0, z: 0, radius: 12 },
+            { x: 0, y: 0, z: 0, radius: 12 }
+        ]
+    });
 }
 
-window.addEventListener(
-    "gtqhi:race-started",
-    () => {
-        console.log("レース開始！");
-    }
-);
+// レース開始関数
+function GTQHI_START_RACE() {
 
-window.addEventListener(
-    "gtqhi:lap-completed",
-    (event) => {
-        console.log(
-            "ラップ完了！",
-            event.detail.formattedLapTime
-        );
+    if (typeof GTQHI_RACE === "undefined") {
+        console.error("GTQHI: RACE SYSTEMがありません");
+        return false;
     }
-);
+
+    if (typeof playerVehicle === "undefined") {
+        console.error("GTQHI: playerVehicleがありません");
+        return false;
+    }
+
+    return GTQHI_RACE.start(playerVehicle);
+}
+
+// レースイベント
+if (typeof window !== "undefined") {
+
+    window.addEventListener(
+        "gtqhi:race-started",
+        () => console.log("🏁 GTQHI RACE START!")
+    );
+
+    window.addEventListener(
+        "gtqhi:lap-completed",
+        (event) => {
+            console.log(
+                "LAP COMPLETE:",
+                event.detail.formattedLapTime
+            );
+        }
+    );
+
+    window.addEventListener(
+        "gtqhi:race-finished",
+        (event) => {
+            console.log("🏆 RACE FINISHED!", event.detail);
+        }
+    );
+}
+
+// 起動時のコース設定
+console.log("GTQHI RACE INTEGRATION READY");
+
 
 window.addEventListener(
     "gtqhi:race-finished",
