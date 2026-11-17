@@ -6697,13 +6697,144 @@ if (typeof window !== "undefined") {
 console.log("GTQHI RACE INTEGRATION READY");
 
 
-window.addEventListener(
-    "gtqhi:race-finished",
-    (event) => {
-        console.log("レース終了！");
-        console.log(event.detail);
+
+/* =========================================
+   GTQHI PART 12
+   3D RACING COMPATIBILITY API
+========================================= */
+
+const GTQHI_3D_COMPAT = {
+
+    list: VEHICLE_DATABASE.map(car => car.name),
+
+    getSpec(name) {
+        const car = VEHICLE_DATABASE.find(
+            item => item.name === name
+        );
+
+        if (!car) return null;
+
+        return {
+            name: car.name,
+            manufacturer: car.manufacturer,
+            speed: car.maxSpeed,
+            acceleration: car.acceleration,
+            handling: car.handling,
+            color: car.color,
+            power: car.power,
+            mass: car.mass
+        };
+    },
+
+    create(name, color) {
+
+        const THREE = global.THREE;
+
+        if (!THREE) {
+            console.error("GTQHI: THREE.js がありません");
+            return null;
+        }
+
+        const spec = this.getSpec(name);
+
+        if (!spec) {
+            console.error("GTQHI: 車両が見つかりません", name);
+            return null;
+        }
+
+        const vehicle = new THREE.Group();
+
+        const paint = new THREE.MeshStandardMaterial({
+            color: color || spec.color,
+            metalness: 0.55,
+            roughness: 0.3
+        });
+
+        const glass = new THREE.MeshStandardMaterial({
+            color: 0x182b3b,
+            metalness: 0.4,
+            roughness: 0.2
+        });
+
+        const rubber = new THREE.MeshStandardMaterial({
+            color: 0x151515,
+            roughness: 0.9
+        });
+
+        // 車体
+        const body = new THREE.Mesh(
+            new THREE.BoxGeometry(2, 0.55, 4.2),
+            paint
+        );
+
+        body.position.y = 0.75;
+        body.castShadow = true;
+        vehicle.add(body);
+
+        // キャビン
+        const cabin = new THREE.Mesh(
+            new THREE.BoxGeometry(1.65, 0.7, 1.9),
+            glass
+        );
+
+        cabin.position.set(0, 1.35, -0.15);
+        cabin.castShadow = true;
+        vehicle.add(cabin);
+
+        // タイヤ
+        const wheelPositions = [
+            [-1.05, 0.4, 1.25],
+            [1.05, 0.4, 1.25],
+            [-1.05, 0.4, -1.25],
+            [1.05, 0.4, -1.25]
+        ];
+
+        wheelPositions.forEach(position => {
+
+            const wheel = new THREE.Mesh(
+                new THREE.CylinderGeometry(
+                    0.42, 0.42, 0.28, 20
+                ),
+                rubber
+            );
+
+            wheel.rotation.z = Math.PI / 2;
+
+            wheel.position.set(
+                position[0],
+                position[1],
+                position[2]
+            );
+
+            wheel.castShadow = true;
+            vehicle.add(wheel);
+        });
+
+        // 性能データ
+        vehicle.userData.gtqhi = spec;
+
+        vehicle.maxSpeed = spec.speed;
+        vehicle.acceleration = spec.acceleration;
+        vehicle.handling = spec.handling;
+        vehicle.braking = 1;
+
+        vehicle.name = spec.name;
+
+        return vehicle;
     }
+};
+
+global.GTQHICars = GTQHI_3D_COMPAT;
+
+console.log(
+    "GTQHI PART 12: 3D COMPATIBILITY READY",
+    GTQHI_3D_COMPAT.list.length,
+    "vehicles"
 );
+
+/* GTQHI IIFE CLOSE */
+})(window);
+
 
 /* ============================================================
    GTQHI PART 11 - RACE SYSTEM
