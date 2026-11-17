@@ -6704,3 +6704,653 @@ window.addEventListener(
         console.log(event.detail);
     }
 );
+
+/* ============================================================
+   GTQHI PART 11 - RACE SYSTEM
+   PART 10 + RACE INTEGRATION の下に追加
+============================================================ */
+
+const GTQHI_RACE_CONFIG = {
+    laps: 3,
+    countdown: 3,
+    updateInterval: 50,
+    checkpointRadius: 12,
+    storageKey: "GTQHI_RACE_BEST_TIMES"
+};
+
+const GTQHI_RACE_DATA = {
+    status: "idle",
+    courseId: "city_circuit",
+    courseName: "CITY CIRCUIT",
+    checkpoints: [],
+    currentCheckpoint: 0,
+    completedLaps: 0,
+    totalLaps: 3,
+    startTime: 0,
+    elapsedTime: 0,
+    lapStartTime: 0,
+    lapTimes: [],
+    bestTime: null,
+    vehicle: null,
+    timer: null,
+    countdownEnd: 0
+};
+
+
+/* =========================
+   1. UTILITIES
+========================= */
+
+const GTQHI_RACE_UTILS = {
+
+    position(vehicle) {
+        if (!vehicle) return null;
+
+        const p = vehicle.position || vehicle;
+
+        const x = Number(p.x);
+        const y = Number(p.y || 0);
+        const z = Number(p.z);
+
+        if (!Number.isFinite(x) ||
+            !Number.isFinite(z)) {
+            return null;
+        }
+
+        return { x, y, z };
+    },
+
+    distance(a, b) {
+        return Math.sqrt(
+            (a.x - b.x) ** 2 +
+            (a.y - b.y) ** 2 +
+            (a.z - b.z) ** 2
+        );
+    },
+
+    format(ms) {
+        ms = Math.max(0, Math.floor(ms));
+
+        const min = Math.floor(ms / 60000);
+        const sec = Math.floor((ms % 60000) / 1000);
+        const milli = ms % 1000;
+
+        return (
+            String(min).padStart(2, "0") + ":" +
+            String(sec).padStart(2, "0") + "." +
+            String(milli).padStart(3, "0")
+        );
+    },
+
+    emit(name, detail = {}) {
+        window.dispatchEvent(
+            new CustomEvent(name, { detail })
+        );
+    }
+};
+
+
+/* =========================
+   2. COURSE SYSTEM
+========================= */
+
+const GTQHI_RACE_COURSE = {
+
+    configure(options) {
+        if (!options ||
+            !Array.isArray(options.checkpoints) ||
+            options.checkpoints.length < 2) {
+            console.error("GTQHI: コース設定が不正です");
+            return false;
+        }
+
+        const points = [];
+
+        for (const point of options.checkpoints) {
+            const p = GTQHI_RACE_UTILS.position(point);
+
+            if (!p) {
+                console.error("GTQHI: チェックポイント座標エラー");
+                return false;
+            }
+
+            points.push({
+                x: p.x,
+                y: p.y,
+                z: p.z,
+                radius:
+                    Number(point.radius) > 0
+                        ? Number(point.radius)
+                        : GTQHI_RACE_CONFIG.checkpointRadius
+            });
+        }
+
+        GTQHI_RACE_DATA.courseId =
+            options.id || "default_course";
+
+        GTQHI_RACE_DATA.courseName =
+            options.name || "GTQHI CIRCUIT";
+
+        GTQHI_RACE_DATA.totalLaps =
+            Math.max(1, Math.floor(
+                Number(options.laps) ||
+                GTQHI_RACE_CONFIG.laps
+            ));
+
+        GTQHI_RACE_DATA.checkpoints = points;
+
+        return true;
+    }
+};
+
+
+/* =========================
+   3. BEST TIME SAVE
+========================= */
+
+const GTQHI_RACE_SAVE = {
+
+    read() {
+        try {
+            return JSON.parse(
+                localStorage.getItem(
+                    GTQHI_RACE_CONFIG.storageKey
+                ) || "{}"
+            );
+        } catch (error) {
+            return {};
+        }
+    },
+
+    get(courseId) {
+        const data = this.read();
+        return Number(data[courseId]) || null;
+    },
+
+    save(courseId, time) {
+        try {
+            const data = this.read();
+            const old = Number(data[courseId]);
+
+            if (old > 0 && old <= time) {
+                return false;
+            }
+
+            data[courseId] = time;
+
+            localStorage.setItem(
+                GTQHI_RACE_CONFIG.storageKey,
+                JSON.stringify(data)
+            );
+
+            return true;
+        } catch (error) {
+            console.warn("GTQHI: ベストタイム保存失敗", error);
+            return false;
+        }
+    }
+};
+
+
+/* =========================
+   4. RACE UI
+========================= */
+
+const GTQHI_RACE_UI = {
+
+    create() {
+        if (document.getElementById("gtqhi-race-hud")) {
+            return;
+        }
+
+        const style = document.createElement("style");
+
+        style.textContent = `
+            #gtqhi-race-hud {
+                position:fixed;
+                top:15px;
+                left:50%;
+                transform:translateX(-50%);
+                z-index:99999;
+                background:rgba(0,0,0,.85);
+                color:white;
+                border:1px solid #00dfff;
+                border-radius:12px;
+                padding:12px 22px;
+                text-align:center;
+                font-family:Arial,sans-serif;
+                min-width:210px;
+                pointer-events:none;
+            }
+
+            #gtqhi-race-time {
+                color:#00eaff;
+                font-size:26px;
+                font-weight:bold;
+            }
+
+            #gtqhi-race-info {
+                font-size:13px;
+                margin-top:6px;
+            }
+
+            #gtqhi-race-result {
+                display:none;
+                position:fixed;
+                inset:0;
+                z-index:100000;
+                background:rgba(0,0,0,.8);
+                align-items:center;
+                justify-content:center;
+                color:white;
+                font-family:Arial,sans-serif;
+            }
+
+            #gtqhi-race-result-box {
+                background:#101d30;
+                border:1px solid #00dfff;
+                border-radius:16px;
+                padding:25px;
+                width: min(340px, 85vw);
+                text-align:center;
+            }
+
+            #gtqhi-race-result button {
+                background:#007b9e;
+                border:0;
+                border-radius:8px;
+                padding:12px 25px;
+                color:white;
+                margin-top:15px;
+            }
+        `;
+
+        document.head.appendChild(style);
+
+        const hud = document.createElement("div");
+        hud.id = "gtqhi-race-hud";
+
+        hud.innerHTML = `
+            <div id="gtqhi-race-time">READY</div>
+            <div id="gtqhi-race-info">LAP 0 / 3</div>
+        `;
+
+        document.body.appendChild(hud);
+
+        const result = document.createElement("div");
+        result.id = "gtqhi-race-result";
+
+        result.innerHTML = `
+            <div id="gtqhi-race-result-box">
+                <h2>🏁 RACE FINISHED!</h2>
+                <div id="gtqhi-race-result-text"></div>
+                <button id="gtqhi-race-close">CLOSE</button>
+            </div>
+        `;
+
+        document.body.appendChild(result);
+
+        document.getElementById("gtqhi-race-close")
+            .addEventListener("click", () => {
+                result.style.display = "none";
+            });
+    },
+
+    update(mainText, infoText) {
+        const time = document.getElementById(
+            "gtqhi-race-time"
+        );
+
+        const info = document.getElementById(
+            "gtqhi-race-info"
+        );
+
+        if (time) time.textContent = mainText;
+        if (info) info.textContent = infoText;
+    },
+
+    showResult(data) {
+        const result = document.getElementById(
+            "gtqhi-race-result"
+        );
+
+        const text = document.getElementById(
+            "gtqhi-race-result-text"
+        );
+
+        if (!result || !text) return;
+
+        text.replaceChildren();
+
+        const total = document.createElement("p");
+        total.textContent =
+            "TIME: " + GTQHI_RACE_UTILS.format(data.time);
+
+        const best = document.createElement("p");
+        best.textContent =
+            "BEST: " +
+            GTQHI_RACE_UTILS.format(data.bestTime);
+
+        const record = document.createElement("h3");
+        record.textContent =
+            data.newRecord ? "🏆 NEW RECORD!" : "RACE COMPLETE";
+
+        text.append(total, best, record);
+
+        data.lapTimes.forEach((lap, index) => {
+            const row = document.createElement("p");
+            row.textContent =
+                "LAP " + (index + 1) + ": " +
+                GTQHI_RACE_UTILS.format(lap);
+
+            text.appendChild(row);
+        });
+
+        result.style.display = "flex";
+    }
+};
+
+
+/* =========================
+   5. RACE ENGINE
+========================= */
+
+const GTQHI_RACE = {
+
+    configure(options) {
+        const success =
+            GTQHI_RACE_COURSE.configure(options);
+
+        if (success) {
+            GTQHI_RACE_DATA.bestTime =
+                GTQHI_RACE_SAVE.get(
+                    GTQHI_RACE_DATA.courseId
+                );
+        }
+
+        return success;
+    },
+
+    start(vehicle) {
+        if (
+            GTQHI_RACE_DATA.status === "racing" ||
+            GTQHI_RACE_DATA.status === "countdown"
+        ) {
+            return false;
+        }
+
+        if (!vehicle) {
+            console.error("GTQHI: 車両が取得できません");
+            return false;
+        }
+
+        if (GTQHI_RACE_DATA.checkpoints.length < 2) {
+            console.error("GTQHI: コースが未設定です");
+            return false;
+        }
+
+        if (!GTQHI_RACE_UTILS.position(vehicle)) {
+            console.error("GTQHI: 車両のpositionがありません");
+            return false;
+        }
+
+        this.stopTimer();
+
+        GTQHI_RACE_DATA.vehicle = vehicle;
+        GTQHI_RACE_DATA.status = "countdown";
+        GTQHI_RACE_DATA.currentCheckpoint = 0;
+        GTQHI_RACE_DATA.completedLaps = 0;
+        GTQHI_RACE_DATA.elapsedTime = 0;
+        GTQHI_RACE_DATA.lapTimes = [];
+
+        GTQHI_RACE_DATA.countdownEnd =
+            Date.now() +
+            GTQHI_RACE_CONFIG.countdown * 1000;
+
+        GTQHI_RACE_UI.create();
+
+        GTQHI_RACE_UI.update(
+            String(GTQHI_RACE_CONFIG.countdown),
+            "GET READY!"
+        );
+
+        GTQHI_RACE_UTILS.emit("gtqhi:race-preparing");
+
+        GTQHI_RACE_DATA.timer = setInterval(
+            () => this.tick(),
+            GTQHI_RACE_CONFIG.updateInterval
+        );
+
+        return true;
+    },
+
+    tick() {
+        const data = GTQHI_RACE_DATA;
+
+        if (data.status === "countdown") {
+            const remaining =
+                Math.ceil(
+                    (data.countdownEnd - Date.now()) / 1000
+                );
+
+            if (remaining > 0) {
+                GTQHI_RACE_UI.update(
+                    String(remaining),
+                    "GET READY!"
+                );
+            } else {
+                this.begin();
+            }
+
+            return;
+        }
+
+        if (data.status !== "racing") return;
+
+        data.elapsedTime = Date.now() - data.startTime;
+
+        this.checkCheckpoint(data.vehicle);
+
+        if (data.status !== "racing") return;
+
+        const lap = Math.min(
+            data.completedLaps + 1,
+            data.totalLaps
+        );
+
+        GTQHI_RACE_UI.update(
+            GTQHI_RACE_UTILS.format(data.elapsedTime),
+            "LAP " + lap + " / " + data.totalLaps +
+            " | CP " +
+            (data.currentCheckpoint + 1) +
+            " / " + data.checkpoints.length
+        );
+    },
+
+    begin() {
+        const data = GTQHI_RACE_DATA;
+        const now = Date.now();
+
+        data.status = "racing";
+        data.startTime = now;
+        data.lapStartTime = now;
+
+        GTQHI_RACE_UI.update("GO!", "RACE STARTED!");
+
+        GTQHI_RACE_UTILS.emit("gtqhi:race-started", {
+            courseId: data.courseId
+        });
+    },
+
+    checkCheckpoint(vehicle) {
+        const data = GTQHI_RACE_DATA;
+
+        const position =
+            GTQHI_RACE_UTILS.position(vehicle);
+
+        if (!position) return;
+
+        const cp =
+            data.checkpoints[data.currentCheckpoint];
+
+        if (!cp) return;
+
+        const distance =
+            GTQHI_RACE_UTILS.distance(position, cp);
+
+        if (distance > cp.radius) return;
+
+        GTQHI_RACE_UTILS.emit(
+            "gtqhi:checkpoint-passed",
+            {
+                index: data.currentCheckpoint + 1
+            }
+        );
+
+        data.currentCheckpoint++;
+
+        if (data.currentCheckpoint >= data.checkpoints.length) {
+            this.completeLap();
+        }
+    },
+
+    completeLap() {
+        const data = GTQHI_RACE_DATA;
+        const now = Date.now();
+
+        const lapTime = now - data.lapStartTime;
+
+        data.lapTimes.push(lapTime);
+        data.completedLaps++;
+
+        GTQHI_RACE_UTILS.emit(
+            "gtqhi:lap-completed",
+            {
+                lap: data.completedLaps,
+                lapTime,
+                formattedLapTime:
+                    GTQHI_RACE_UTILS.format(lapTime)
+            }
+        );
+
+        if (data.completedLaps >= data.totalLaps) {
+            this.finish();
+            return;
+        }
+
+        data.currentCheckpoint = 0;
+        data.lapStartTime = now;
+    },
+
+    finish() {
+        const data = GTQHI_RACE_DATA;
+
+        if (data.status !== "racing") return false;
+
+        data.elapsedTime = Date.now() - data.startTime;
+        data.status = "finished";
+
+        this.stopTimer();
+
+        const newRecord = GTQHI_RACE_SAVE.save(
+            data.courseId,
+            data.elapsedTime
+        );
+
+        const bestTime =
+            GTQHI_RACE_SAVE.get(data.courseId) ||
+            data.elapsedTime;
+
+        data.bestTime = bestTime;
+
+        const result = {
+            courseId: data.courseId,
+            time: data.elapsedTime,
+            bestTime,
+            newRecord,
+            lapTimes: data.lapTimes.slice()
+        };
+
+        GTQHI_RACE_UI.update("FINISHED!", "RACE COMPLETE");
+        GTQHI_RACE_UI.showResult(result);
+
+        GTQHI_RACE_UTILS.emit(
+            "gtqhi:race-finished",
+            result
+        );
+
+        return result;
+    },
+
+    stopTimer() {
+        if (GTQHI_RACE_DATA.timer !== null) {
+            clearInterval(GTQHI_RACE_DATA.timer);
+            GTQHI_RACE_DATA.timer = null;
+        }
+    },
+
+    abort() {
+        this.stopTimer();
+
+        GTQHI_RACE_DATA.status = "idle";
+        GTQHI_RACE_DATA.elapsedTime = 0;
+
+        GTQHI_RACE_UI.update("READY", "RACE ABORTED");
+
+        GTQHI_RACE_UTILS.emit("gtqhi:race-aborted");
+
+        return true;
+    },
+
+    status() {
+        return {
+            status: GTQHI_RACE_DATA.status,
+            course: GTQHI_RACE_DATA.courseName,
+            lap: GTQHI_RACE_DATA.completedLaps,
+            totalLaps: GTQHI_RACE_DATA.totalLaps,
+            checkpoint: GTQHI_RACE_DATA.currentCheckpoint,
+            time: GTQHI_RACE_DATA.elapsedTime,
+            bestTime: GTQHI_RACE_DATA.bestTime
+        };
+    }
+};
+
+
+/* =========================
+   6. COURSE INITIALIZATION
+========================= */
+
+// 既存のコース設定関数を実行
+GTQHI_SETUP_RACE();
+
+// HUDを準備
+GTQHI_RACE_UI.create();
+
+
+/* =========================
+   7. PLAYER START API
+========================= */
+
+// 既存の開始関数を安全な車両取得方式に更新
+function GTQHI_START_RACE() {
+
+    const vehicle =
+        GTQHI_PLAYER_PHYSICS.getVehicle();
+
+    if (!vehicle) {
+        console.error(
+            "GTQHI: プレイヤー車両がありません"
+        );
+
+        return false;
+    }
+
+    return GTQHI_RACE.start(vehicle);
+}
+
+
+/* =========================
+   8. READY
+========================= */
+
+console.log("GTQHI PART 11: RACE SYSTEM READY");
