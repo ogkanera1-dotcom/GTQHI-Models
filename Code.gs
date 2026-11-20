@@ -13,9 +13,12 @@ var APP_CONFIG = {
   presenceSeconds: 45
 };
 
-function doGet() {
-  return HtmlService.createHtmlOutputFromFile("index")
-    .setTitle(APP_CONFIG.title)
+function doGet(e) {
+  var page = e && e.parameter ? e.parameter.page : "";
+  var file = page === "craft" ? "craft" : "index";
+  var title = page === "craft" ? "ルイトCRAFT 3D" : APP_CONFIG.title;
+  return HtmlService.createHtmlOutputFromFile(file)
+    .setTitle(title)
     .addMetaTag("viewport", "width=device-width, initial-scale=1, maximum-scale=1");
 }
 
