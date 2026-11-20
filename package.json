@@ -1,0 +1,17 @@
+{
+  "name": "ruito-ai-apps-script",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ルイトAIをGoogle Apps Scriptへ同期するための設定",
+  "scripts": {
+    "setup:clasp": "node scripts/setup-clasp.js",
+    "login": "clasp login",
+    "pull": "clasp pull",
+    "push": "clasp push",
+    "open": "clasp open",
+    "deploy": "clasp deploy"
+  },
+  "devDependencies": {
+    "@google/clasp": "^3.0.6"
+  }
+}
