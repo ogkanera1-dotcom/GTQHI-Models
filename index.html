@@ -2,48 +2,345 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#07101e">
+<title>ルイトAI Studio</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#050b18;color:#f4f8ff;font-family:Arial,sans-serif;min-height:100vh}button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-#particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}.particle{position:absolute;bottom:-20px;background:#168cff;border-radius:50%;box-shadow:0 0 12px #168cff;animation:rise linear infinite}@keyframes rise{to{transform:translateY(-110vh);opacity:0}}
-.auth-wrap{position:relative;min-height:100vh;display:grid;place-items:center;padding:20px}.auth-card,.panel{background:#0b1930;border:1px solid #1d4772;border-radius:18px;box-shadow:0 18px 60px #0007}.auth-card{width:min(420px,100%);padding:28px}.logo{color:#55b7ff;font-size:26px;font-weight:bold;text-shadow:0 0 18px #087bff}.muted{color:#91abc8}.auth-card label{display:block;margin:14px 0 6px}.field{width:100%;padding:12px;border:1px solid #28629a;border-radius:10px;background:#0d1d33;color:white}.primary{border:0;border-radius:10px;padding:12px 18px;background:#087bff;color:white;font-weight:bold}.auth-card .primary{width:100%;margin-top:16px}.link-button{border:0;background:none;color:#68bdff;text-decoration:underline;padding:10px 0}.status{min-height:22px;margin-top:12px;color:#ffb5b5;white-space:pre-wrap}
-.app{position:relative;display:flex;min-height:100vh}.sidebar{width:220px;flex-shrink:0;padding:20px;background:#091326;border-right:1px solid #173b65}.sidebar .logo{margin-bottom:26px}.nav{width:100%;padding:12px;margin:5px 0;color:#d8eaff;background:#10213a;border:1px solid #183b60;border-radius:10px;text-align:left}.nav:hover,.nav.active{background:#17416d}.profile{margin-top:20px;padding-top:16px;border-top:1px solid #173b65;color:#9eb8d3;font-size:13px;overflow-wrap:anywhere}.main{flex:1;min-width:0;display:flex;flex-direction:column}.topbar{height:64px;flex-shrink:0;padding:20px 24px;border-bottom:1px solid #18395b;font-weight:bold}.content{flex:1;min-height:0;padding:20px;overflow:auto}.chat-layout{max-width:1200px;height:min(75vh,760px);min-height:430px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:14px}.chat-panel,.players-panel{display:flex;flex-direction:column;min-height:0}.panel-title{padding:16px;border-bottom:1px solid #1c3e62;font-weight:bold}.messages{flex:1;min-height:0;overflow-y:auto;padding:14px;scrollbar-color:#28629a #0b1930}.message{padding:11px 13px;margin:9px 0;background:#10233d;border:1px solid #205080;border-radius:12px;overflow-wrap:anywhere;white-space:pre-wrap}.message-meta{font-size:12px;color:#79bcf1;margin-bottom:5px}.message-time{color:#8199b2;margin-left:8px}.composer{display:flex;gap:9px;padding:12px;border-top:1px solid #1c3e62}.composer input{flex:1;min-width:0}.send{border:0;border-radius:10px;padding:0 18px;background:#087bff;color:white;font-weight:bold}.stats{display:flex;gap:8px;padding:12px}.stat{flex:1;text-align:center;padding:10px;background:#10213a;border-radius:10px;color:#a9c5e1}.stat strong{display:block;color:white;font-size:20px}.player-list{overflow-y:auto;padding:8px 12px;scrollbar-color:#28629a #0b1930}.player{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid #18314e;overflow-wrap:anywhere}.dot{width:9px;height:9px;border-radius:50%;background:#32d583;box-shadow:0 0 8px #32d583;flex-shrink:0}.offline{background:#67778c;box-shadow:none}.empty{text-align:center;color:#8daecc;padding:28px}.photo-app{max-width:950px;margin:auto;padding:20px}.photo-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.photo-layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px}.canvas-wrap{min-height:300px;display:flex;align-items:center;justify-content:center;background:#050b18;border:1px dashed #28629a;border-radius:12px;overflow:hidden}#photoCanvas{display:none;max-width:100%;max-height:58vh;object-fit:contain}#emptyPhoto{padding:25px;text-align:center;color:#8daecc}.controls{padding:14px;background:#10213a;border-radius:12px}.control{margin:0 0 18px}.control label{display:flex;justify-content:space-between;margin-bottom:8px}.control input{width:100%;accent-color:#168cff}#photoStatus{min-height:24px;margin-top:12px;overflow-wrap:anywhere}#photoStatus a{color:#62bdff}
-@media(max-width:760px){.sidebar{width:72px;padding:10px}.sidebar .logo{font-size:12px;word-break:break-all;margin:6px 0 20px}.nav{font-size:11px;text-align:center;padding:9px 3px}.profile{font-size:10px}.chat-layout{grid-template-columns:1fr;height:calc(100vh - 120px);min-height:440px}.players-panel{max-height:180px}.content{padding:10px}.photo-layout{grid-template-columns:1fr}.canvas-wrap{min-height:220px}}
+:root{color-scheme:dark;--bg:#050b18;--panel:#0b1930;--panel2:#10213a;--line:#1d4772;--blue:#087bff;--cyan:#55b7ff;--muted:#91abc8;--green:#32d583;--danger:#ff8c9a;--radius:14px;--shadow:0 18px 60px #0007}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:#f4f8ff;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}.hidden{display:none!important}.muted{color:var(--muted)}
+#particles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}.particle{position:absolute;bottom:-20px;background:#168cff;border-radius:50%;box-shadow:0 0 12px #168cff;animation:rise linear infinite}@keyframes rise{to{transform:translateY(-110vh);opacity:0}}
+.auth-wrap{position:relative;z-index:1;min-height:100dvh;display:grid;place-items:center;padding:20px}.auth-card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.auth-card{width:min(430px,100%);padding:28px}.logo{font-size:24px;font-weight:800;color:var(--cyan);text-shadow:0 0 16px #087bff}.auth-card h1{font-size:25px;margin:20px 0 5px}.auth-card label{display:block;margin:14px 0 6px}.field{width:100%;min-width:0;padding:12px;border:1px solid #28629a;border-radius:10px;background:#0d1d33;color:white;outline:none}.field:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #168cff33}.primary,.send{border:0;border-radius:10px;padding:12px 18px;background:var(--blue);color:white;font-weight:700}.auth-card .primary{width:100%;margin-top:16px}.link-button{border:0;background:none;color:#68bdff;text-decoration:underline;padding:10px 0}.status{min-height:22px;margin-top:12px;color:#ffb5b5;white-space:pre-wrap;overflow-wrap:anywhere}.auth-note{font-size:12px;line-height:1.55}
+.app{position:relative;z-index:1;display:flex;min-height:100dvh}.sidebar{width:218px;flex-shrink:0;padding:18px;background:#091326;border-right:1px solid #173b65;display:flex;flex-direction:column}.sidebar .logo{margin:4px 4px 24px}.nav{width:100%;padding:12px;margin:4px 0;color:#d8eaff;background:#10213a;border:1px solid #183b60;border-radius:10px;text-align:left}.nav:hover,.nav.active{background:#17416d}.profile{margin-top:auto;padding-top:14px;border-top:1px solid #173b65;color:#9eb8d3;font-size:13px;overflow-wrap:anywhere}.main{flex:1;min-width:0;display:flex;flex-direction:column}.topbar{height:62px;flex-shrink:0;padding:19px 22px;border-bottom:1px solid #18395b;font-weight:750}.content{flex:1;min-height:0;padding:18px;overflow:auto}.page{max-width:1400px;margin:auto}.page-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 0 15px}.page-heading h1{font-size:22px;margin:0}.small{font-size:12px}
+/* Chat and live players */
+.chat-layout{height:min(76vh,820px);min-height:430px;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px}.chat-panel,.players-panel{display:flex;flex-direction:column;min-height:0}.panel-title{padding:14px 16px;border-bottom:1px solid #1c3e62;font-weight:750}.messages{flex:1;min-height:0;overflow-y:auto;padding:14px;scrollbar-color:#28629a #0b1930}.message{padding:11px 13px;margin:9px 0;background:#10233d;border:1px solid #205080;border-radius:12px;overflow-wrap:anywhere;white-space:pre-wrap}.message-meta{font-size:12px;color:#79bcf1;margin-bottom:5px}.message-time{color:#8199b2;margin-left:8px}.composer{display:flex;gap:9px;padding:12px;border-top:1px solid #1c3e62}.composer .field{flex:1}.stats{display:flex;gap:8px;padding:12px}.stat{flex:1;text-align:center;padding:10px 5px;background:#10213a;border-radius:10px;color:#a9c5e1;font-size:12px}.stat strong{display:block;color:white;font-size:20px}.player-list{overflow-y:auto;padding:8px 12px;scrollbar-color:#28629a #0b1930}.player{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid #18314e;overflow-wrap:anywhere}.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0}.empty{text-align:center;color:var(--muted);padding:28px}
+/* Video editor */
+.editor{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;align-items:start}.editor-workspace{min-width:0}.preview-panel{padding:14px}.preview-stage{position:relative;min-height:270px;aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;background:#02050a;border:1px solid #18395b;border-radius:12px}.preview-stage video{display:block;width:100%;height:100%;max-height:58vh;object-fit:contain;filter:brightness(var(--brightness,1)) contrast(var(--contrast,1)) saturate(var(--saturation,1))}.preview-caption{position:absolute;left:5%;right:5%;bottom:8%;text-align:center;font-size:clamp(16px,3vw,34px);font-weight:800;color:white;text-shadow:0 2px 5px #000,0 0 12px #000;white-space:pre-wrap;overflow-wrap:anywhere;pointer-events:none}.placeholder{color:#8199b2;text-align:center;padding:20px}.transport{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}.tool-button{border:1px solid #24517f;border-radius:9px;background:#10213a;color:#e5f3ff;padding:9px 12px}.tool-button:hover{background:#17416d}.timecode{font-variant-numeric:tabular-nums;color:#9ec8ea;font-size:13px}.timeline-panel{margin-top:14px;padding:14px}.timeline-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.timeline-lanes{display:grid;gap:10px}.lane-label{font-size:12px;color:#9eb8d3;margin-bottom:5px}.track{position:relative;height:48px;display:flex;align-items:center;overflow:auto;background:#06101e;border:1px solid #1a3b60;border-radius:8px;scrollbar-color:#28629a #0b1930}.clip{height:34px;min-width:120px;margin:0 5px;padding:7px 10px;background:linear-gradient(90deg,#0964ca,#168cff);border:1px solid #67bbff;border-radius:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}.audio-clip{background:linear-gradient(90deg,#116b4b,#25bb80);border-color:#6bf0b3}.range-row{display:grid;grid-template-columns:58px 1fr 54px;gap:10px;align-items:center;margin:10px 0}.range-row input{width:100%;accent-color:var(--blue)}.settings-panel{padding:16px}.settings-panel h2{font-size:17px;margin:0 0 15px}.setting{margin:0 0 17px}.setting label{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:7px;color:#dbeaff}.setting input[type=range]{width:100%;accent-color:var(--blue)}.setting input[type=text]{width:100%}.setting select{width:100%;padding:9px;background:#0d1d33;color:white;border:1px solid #28629a;border-radius:9px}.file-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.file-input{max-width:100%;font-size:13px;color:#b8cce1}.editor-status{min-height:20px;color:#a9c5e1;font-size:13px;margin-top:10px;overflow-wrap:anywhere}.progress{height:6px;background:#10213a;border-radius:99px;overflow:hidden;margin-top:8px}.progress span{display:block;width:0;height:100%;background:var(--cyan);transition:width .2s}.editor-tip{line-height:1.55;font-size:12px;color:#91abc8;margin-top:12px}
+/* Photo editor */
+.photo-app{padding:18px}.photo-layout{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:16px}.canvas-wrap{min-height:280px;display:flex;align-items:center;justify-content:center;background:#050b18;border:1px dashed #28629a;border-radius:12px;overflow:hidden}.canvas-wrap canvas{display:none;max-width:100%;max-height:55vh;object-fit:contain}.photo-controls{padding:14px;background:#10213a;border-radius:12px}.photo-status{min-height:22px;margin-top:12px;overflow-wrap:anywhere}.photo-status a{color:#62bdff}
+@media(max-width:900px){.editor{grid-template-columns:1fr}.settings-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.settings-panel h2,.settings-panel .editor-tip{grid-column:1/-1}}
+@media(max-width:700px){.sidebar{width:72px;padding:9px}.sidebar .logo{font-size:12px;word-break:break-all;margin:6px 0 17px}.nav{font-size:10px;text-align:center;padding:9px 3px}.profile{font-size:10px}.topbar{height:54px;padding:16px}.content{padding:10px}.chat-layout{grid-template-columns:1fr;height:auto;min-height:0}.chat-panel{height:55vh;min-height:360px}.players-panel{max-height:230px}.photo-layout{grid-template-columns:1fr}.preview-stage{min-height:190px}.settings-panel{grid-template-columns:1fr}.settings-panel h2,.settings-panel .editor-tip{grid-column:auto}.range-row{grid-template-columns:45px 1fr 45px;gap:6px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<div id="particles"></div>
-<div id="authView" class="auth-wrap"><div class="auth-card"><div class="logo">🤖 ルイトAI</div><h2 id="authTitle">ログイン</h2><p class="muted">アカウントでチャットに参加しよう</p>
-  <form id="authForm"><label for="username">ユーザー名</label><input class="field" id="username" autocomplete="username" minlength="3" maxlength="20" required>
-    <label for="password">パスワード</label><input class="field" id="password" type="password" autocomplete="current-password" minlength="8" maxlength="200" required>
-    <div id="confirmWrap" class="hidden"><label for="confirmPassword">パスワード（確認）</label><input class="field" id="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="200"></div>
-    <button class="primary" id="authSubmit" type="submit">ログイン</button></form>
-  <button class="link-button" id="toggleAuth" type="button">新規登録はこちら</button><div class="status" id="authStatus"></div>
-  <p class="muted" style="font-size:12px">デモ版：ユーザー名とパスワードはこのアプリ用です。大切なパスワードは使わないでください。</p></div></div>
-<div id="appView" class="app hidden"><aside class="sidebar"><div class="logo">🤖 ルイトAI</div><button class="nav active" data-page="chat">💬 チャット</button><button class="nav" data-page="photos">🖼 写真編集</button><div class="profile"><div id="profileName"></div><button class="link-button" id="logout">ログアウト</button></div></aside>
+<div id="particles" aria-hidden="true"></div>
+<section id="authView" class="auth-wrap"><div class="auth-card"><div class="logo">🤖 ルイトAI Studio</div><h1 id="authTitle">ログイン</h1><p class="muted">アカウントでチャットと編集を利用できます。</p>
+<form id="authForm"><label for="username">ユーザー名</label><input class="field" id="username" autocomplete="username" minlength="3" maxlength="20" required>
+<label for="password">パスワード</label><input class="field" id="password" type="password" autocomplete="current-password" minlength="8" maxlength="200" required>
+<div id="confirmWrap" class="hidden"><label for="confirmPassword">パスワード（確認）</label><input class="field" id="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="200"></div>
+<button class="primary" id="authSubmit" type="submit">ログイン</button></form><button class="link-button" id="toggleAuth" type="button">新規登録はこちら</button><div class="status" id="authStatus" role="status"></div>
+<p class="muted auth-note">この簡易アカウントはデモ用です。学校や他サービスで使っているパスワード・個人情報は入力しないでください。</p></div></section>
+<div id="appView" class="app hidden"><aside class="sidebar"><div class="logo">🤖 RUITO</div>
+<button class="nav active" data-page="chat">💬 チャット</button><button class="nav" data-page="editor">🎬 動画編集</button><button class="nav" data-page="photos">🖼 写真編集</button>
+<div class="profile"><div id="profileName"></div><button class="link-button" id="logout" type="button">ログアウト</button></div></aside>
 <main class="main"><header class="topbar" id="pageTitle">💬 オンラインチャット</header><section class="content" id="pageContent"></section></main></div>
 <script>
-const particleArea=document.getElementById('particles');for(let i=0;i<32;i++){const p=document.createElement('i');p.className='particle';const size=2+Math.random()*4;p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${8+Math.random()*12}s;animation-delay:${-Math.random()*15}s`;particleArea.appendChild(p)}
-let registering=false,token=localStorage.getItem('ruitoToken')||'',currentUser='',pollTimer=null,selectedImage=null;
-const authForm=document.getElementById('authForm'),authStatus=document.getElementById('authStatus');
-document.getElementById('toggleAuth').onclick=()=>{registering=!registering;document.getElementById('authTitle').textContent=registering?'新規登録':'ログイン';document.getElementById('authSubmit').textContent=registering?'アカウントを作成':'ログイン';document.getElementById('toggleAuth').textContent=registering?'ログインはこちら':'新規登録はこちら';document.getElementById('confirmWrap').classList.toggle('hidden',!registering);document.getElementById('password').autocomplete=registering?'new-password':'current-password';authStatus.textContent=''};
-authForm.onsubmit=e=>{e.preventDefault();const name=document.getElementById('username').value.trim(),pass=document.getElementById('password').value,confirm=document.getElementById('confirmPassword').value;if(registering&&pass!==confirm){authStatus.textContent='確認用パスワードが一致しません。';return}const button=document.getElementById('authSubmit');button.disabled=true;authStatus.textContent='処理中…';const done=session=>{button.disabled=false;token=session.token;currentUser=session.username;localStorage.setItem('ruitoToken',token);showApp()};const fail=err=>{button.disabled=false;authStatus.textContent=err.message||String(err)};if(registering)google.script.run.withSuccessHandler(done).withFailureHandler(fail).registerAccount(name,pass);else google.script.run.withSuccessHandler(done).withFailureHandler(fail).loginAccount(name,pass)};
-function showApp(){document.getElementById('authView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');document.getElementById('profileName').textContent='ログイン中：'+currentUser;showPage('chat');refreshState();clearInterval(pollTimer);pollTimer=setInterval(refreshState,8000)}
-function doLogout(){const old=token;token='';localStorage.removeItem('ruitoToken');clearInterval(pollTimer);google.script.run.logoutAccount(old);document.getElementById('appView').classList.add('hidden');document.getElementById('authView').classList.remove('hidden')}
-document.getElementById('logout').onclick=doLogout;
-function refreshState(){if(!token)return;google.script.run.withSuccessHandler(state=>{currentUser=state.username;document.getElementById('profileName').textContent='ログイン中：'+currentUser;if(document.getElementById('chatMessages'))renderMessages(state.messages);if(document.getElementById('playerList'))renderPlayers(state)}).withFailureHandler(()=>{if(token)doLogout()}).getAppState(token)}
-function showPage(page){document.querySelectorAll('.nav[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));document.getElementById('pageTitle').textContent=page==='chat'?'💬 オンラインチャット':'🖼 写真編集';const root=document.getElementById('pageContent');if(page==='chat')renderChat();else renderPhotoEditor()}
-function renderChat(){document.getElementById('pageContent').innerHTML=`<div class="chat-layout"><section class="panel chat-panel"><div class="panel-title">みんなのチャット <span class="muted" style="font-size:12px">自動更新</span></div><div class="messages" id="chatMessages" aria-live="polite"></div><form class="composer" id="chatForm"><input class="field" id="chatInput" maxlength="500" placeholder="メッセージを入力…" autocomplete="off"><button class="send" type="submit">送信</button></form></section><aside class="panel players-panel"><div class="panel-title">プレイヤー</div><div class="stats"><div class="stat">全登録<strong id="playerCount">0</strong></div><div class="stat">オンライン<strong id="onlineCount">0</strong></div></div><div class="player-list" id="playerList"></div></aside></div>`;document.getElementById('chatForm').onsubmit=e=>{e.preventDefault();const input=document.getElementById('chatInput'),text=input.value.trim();if(!text)return;input.disabled=true;google.script.run.withSuccessHandler(()=>{input.value='';input.disabled=false;input.focus();refreshState()}).withFailureHandler(err=>{input.disabled=false;alert(err.message||String(err))}).sendChatMessage(token,text)}}
-function renderMessages(messages){const box=document.getElementById('chatMessages');if(!box)return;const nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<80;box.replaceChildren();if(!messages.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='まだメッセージはありません。最初のメッセージを送ろう！';box.appendChild(empty)}messages.forEach(m=>{const item=document.createElement('article');item.className='message';const meta=document.createElement('div');meta.className='message-meta';meta.textContent=m.username;const time=document.createElement('time');time.className='message-time';time.textContent=new Date(m.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});meta.appendChild(time);const text=document.createElement('div');text.textContent=m.text;item.append(meta,text);box.appendChild(item)});if(nearBottom)box.scrollTop=box.scrollHeight}
-function renderPlayers(state){const count=document.getElementById('playerCount'),onlineCount=document.getElementById('onlineCount'),list=document.getElementById('playerList');if(!list)return;count.textContent=state.playerCount;onlineCount.textContent=state.onlineCount;list.replaceChildren();if(!state.onlinePlayers.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='オンラインのプレイヤーはいません';list.appendChild(empty);return}state.onlinePlayers.forEach(name=>{const row=document.createElement('div');row.className='player';const dot=document.createElement('span');dot.className='dot';const label=document.createElement('span');label.textContent=name+(name===currentUser?'（あなた）':'');row.append(dot,label);list.appendChild(row)})}
-function renderPhotoEditor(){document.getElementById('pageContent').innerHTML=`<div class="panel photo-app"><h2>写真編集</h2><p class="muted">画像を選び、明るさ・コントラストを調整してDriveに保存できます。</p><div class="photo-toolbar"><input id="photoFile" type="file" accept="image/*"><button class="primary" id="savePhoto">編集した画像をDriveに保存</button></div><div class="photo-layout"><div class="canvas-wrap"><p id="emptyPhoto">ここに画像プレビューが表示されます</p><canvas id="photoCanvas"></canvas></div><div class="controls"><div class="control"><label>明るさ <span id="brightnessValue">100%</span></label><input id="brightness" type="range" min="30" max="170" value="100"></div><div class="control"><label>コントラスト <span id="contrastValue">100%</span></label><input id="contrast" type="range" min="30" max="170" value="100"></div><button class="nav" type="button" id="resetFilters">調整をリセット</button></div></div><div id="photoStatus"></div></div>`;document.getElementById('photoFile').onchange=loadPhoto;document.getElementById('brightness').oninput=drawPhoto;document.getElementById('contrast').oninput=drawPhoto;document.getElementById('resetFilters').onclick=resetPhotoFilters;document.getElementById('savePhoto').onclick=savePhoto}
-function loadPhoto(e){const file=e.target.files&&e.target.files[0];if(!file)return;if(!file.type.startsWith('image/')){photoStatus('画像ファイルを選んでください。');return}if(file.size>4*1024*1024){photoStatus('画像は4MB以下にしてください。');return}const reader=new FileReader();reader.onload=()=>{const image=new Image();image.onload=()=>{selectedImage={image,name:file.name};document.getElementById('emptyPhoto').classList.add('hidden');document.getElementById('photoCanvas').style.display='block';drawPhoto()};image.src=reader.result};reader.readAsDataURL(file)}
-function drawPhoto(){if(!selectedImage)return;const canvas=document.getElementById('photoCanvas'),ctx=canvas.getContext('2d');canvas.width=selectedImage.image.naturalWidth;canvas.height=selectedImage.image.naturalHeight;const b=document.getElementById('brightness').value,c=document.getElementById('contrast').value;document.getElementById('brightnessValue').textContent=b+'%';document.getElementById('contrastValue').textContent=c+'%';ctx.filter=`brightness(${b}%) contrast(${c}%)`;ctx.drawImage(selectedImage.image,0,0);ctx.filter='none'}
-function resetPhotoFilters(){if(!selectedImage)return;document.getElementById('brightness').value=100;document.getElementById('contrast').value=100;drawPhoto()}
-function photoStatus(text){const node=document.getElementById('photoStatus');if(node)node.textContent=text}
-function savePhoto(){if(!selectedImage){photoStatus('先に画像を追加してください。');return}const button=document.getElementById('savePhoto');button.disabled=true;photoStatus('保存中…');google.script.run.withSuccessHandler(result=>{button.disabled=false;const status=document.getElementById('photoStatus');status.textContent='Driveに保存しました：';const link=document.createElement('a');link.href=result.url;link.target='_blank';link.rel='noopener';link.textContent=result.name;status.appendChild(link)}).withFailureHandler(err=>{button.disabled=false;photoStatus(err.message||String(err))}).saveEditedImage({token,name:selectedImage.name,dataUrl:document.getElementById('photoCanvas').toDataURL('image/jpeg',.9)})}
+'use strict';
+const particleArea=document.getElementById('particles');
+for(let i=0;i<28;i++){const p=document.createElement('i');p.className='particle';const size=2+Math.random()*4;p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${8+Math.random()*12}s;animation-delay:${-Math.random()*15}s`;particleArea.appendChild(p)}
+let registering=false;
+let token=localStorage.getItem('ruitoToken')||'';
+let currentUser='';
+let pollTimer=null;
+let selectedImage=null;
+let videoUrl=null;
+let audioUrl=null;
+let mediaRecorder=null;
+let recordedChunks=[];
+let previewAnimation=0;
+const authForm=document.getElementById('authForm');
+const authStatus=document.getElementById('authStatus');
+const byId=id=>document.getElementById(id);
+
+byId('toggleAuth').onclick=()=>{
+  registering=!registering;
+  byId('authTitle').textContent=registering?'新規登録':'ログイン';
+  byId('authSubmit').textContent=registering?'アカウントを作成':'ログイン';
+  byId('toggleAuth').textContent=registering?'ログインはこちら':'新規登録はこちら';
+  byId('confirmWrap').classList.toggle('hidden',!registering);
+  byId('password').autocomplete=registering?'new-password':'current-password';
+  authStatus.textContent='';
+};
+
+authForm.onsubmit=e=>{
+  e.preventDefault();
+  const name=byId('username').value.trim();
+  const pass=byId('password').value;
+  const confirm=byId('confirmPassword').value;
+  if(registering&&pass!==confirm){authStatus.textContent='確認用パスワードが一致しません。';return}
+  const button=byId('authSubmit');button.disabled=true;authStatus.textContent='処理中…';
+  const done=session=>{button.disabled=false;token=session.token;currentUser=session.username;localStorage.setItem('ruitoToken',token);showApp()};
+  const fail=err=>{button.disabled=false;authStatus.textContent=err.message||String(err)};
+  if(registering)google.script.run.withSuccessHandler(done).withFailureHandler(fail).registerAccount(name,pass);
+  else google.script.run.withSuccessHandler(done).withFailureHandler(fail).loginAccount(name,pass);
+};
+
+function showApp(){
+  byId('authView').classList.add('hidden');byId('appView').classList.remove('hidden');
+  byId('profileName').textContent='ログイン中：'+currentUser;
+  showPage('chat');refreshState();clearInterval(pollTimer);pollTimer=setInterval(refreshState,8000);
+}
+function doLogout(){
+  const old=token;token='';localStorage.removeItem('ruitoToken');clearInterval(pollTimer);
+  if(old)google.script.run.logoutAccount(old);
+  byId('appView').classList.add('hidden');byId('authView').classList.remove('hidden');
+}
+byId('logout').onclick=doLogout;
+function refreshState(){
+  if(!token)return;
+  google.script.run.withSuccessHandler(state=>{
+    currentUser=state.username;byId('profileName').textContent='ログイン中：'+currentUser;
+    if(byId('chatMessages'))renderMessages(state.messages||[]);
+    if(byId('playerList'))renderPlayers(state);
+  }).withFailureHandler(()=>{if(token)doLogout()}).getAppState(token);
+}
+function showPage(page){
+  document.querySelectorAll('.nav[data-page]').forEach(button=>button.classList.toggle('active',button.dataset.page===page));
+  const titles={chat:'💬 オンラインチャット',editor:'🎬 動画編集スタジオ',photos:'🖼 写真編集'};
+  byId('pageTitle').textContent=titles[page];
+  if(page==='chat')renderChat();else if(page==='editor')renderVideoEditor();else renderPhotoEditor();
+}
 document.querySelectorAll('.nav[data-page]').forEach(button=>button.onclick=()=>showPage(button.dataset.page));
-if(token)google.script.run.withSuccessHandler(session=>{currentUser=session.username;showApp()}).withFailureHandler(()=>{localStorage.removeItem('ruitoToken');token=''}).getAppState(token);
+
+/* Chat */
+function renderChat(){
+  byId('pageContent').innerHTML=`<div class="page chat-layout"><section class="panel chat-panel"><div class="panel-title">みんなのチャット <span class="muted small">8秒ごとに更新</span></div><div class="messages" id="chatMessages" aria-live="polite"></div><form class="composer" id="chatForm"><input class="field" id="chatInput" maxlength="500" placeholder="メッセージを入力…" autocomplete="off"><button class="send" type="submit">送信</button></form></section><aside class="panel players-panel"><div class="panel-title">プレイヤー</div><div class="stats"><div class="stat">登録<strong id="playerCount">0</strong></div><div class="stat">オンライン<strong id="onlineCount">0</strong></div></div><div class="player-list" id="playerList"></div></aside></div>`;
+  byId('chatForm').onsubmit=e=>{
+    e.preventDefault();const input=byId('chatInput'),text=input.value.trim();if(!text)return;
+    input.disabled=true;
+    google.script.run.withSuccessHandler(()=>{input.value='';input.disabled=false;input.focus();refreshState()}).withFailureHandler(err=>{input.disabled=false;showToast(err.message||String(err))}).sendChatMessage(token,text);
+  };
+  refreshState();
+}
+function renderMessages(messages){
+  const box=byId('chatMessages');if(!box)return;
+  const nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<80;
+  box.replaceChildren();
+  if(!messages.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='まだメッセージはありません。最初のメッセージを送ろう！';box.appendChild(empty)}
+  messages.forEach(message=>{
+    const item=document.createElement('article');item.className='message';
+    const meta=document.createElement('div');meta.className='message-meta';meta.textContent=message.username;
+    const time=document.createElement('time');time.className='message-time';time.textContent=new Date(message.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});meta.appendChild(time);
+    const text=document.createElement('div');text.textContent=message.text;item.append(meta,text);box.appendChild(item);
+  });
+  if(nearBottom)box.scrollTop=box.scrollHeight;
+}
+function renderPlayers(state){
+  const count=byId('playerCount'),onlineCount=byId('onlineCount'),list=byId('playerList');if(!list)return;
+  count.textContent=state.playerCount;onlineCount.textContent=state.onlineCount;list.replaceChildren();
+  if(!state.onlinePlayers.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='オンラインのプレイヤーはいません';list.appendChild(empty);return}
+  state.onlinePlayers.forEach(name=>{const row=document.createElement('div');row.className='player';const dot=document.createElement('span');dot.className='dot';const label=document.createElement('span');label.textContent=name+(name===currentUser?'（あなた）':'');row.append(dot,label);list.appendChild(row)});
+}
+function showToast(message){
+  let toast=byId('toast');if(!toast){toast=document.createElement('div');toast.id='toast';toast.style.cssText='position:fixed;z-index:20;bottom:18px;left:50%;transform:translateX(-50%);max-width:90vw;padding:12px 16px;border:1px solid #28629a;border-radius:10px;background:#10213a;color:white;box-shadow:0 8px 30px #0009';document.body.appendChild(toast)}
+  toast.textContent=message;toast.classList.remove('hidden');clearTimeout(toast._timer);toast._timer=setTimeout(()=>toast.classList.add('hidden'),3500);
+}
+
+/* Video editing: local preview and browser-side WebM export. */
+function renderVideoEditor(){
+  byId('pageContent').innerHTML=`<div class="page"><div class="page-heading"><h1>動画編集スタジオ</h1><span class="muted small">プレビューと書き出しはこの端末内で処理</span></div>
+  <div class="editor"><div class="editor-workspace"><section class="panel preview-panel"><div class="file-row"><label class="tool-button">🎞 動画を追加 <input id="videoFile" class="file-input" type="file" accept="video/*" hidden></label><label class="tool-button">🎵 音楽を追加 <input id="audioFile" class="file-input" type="file" accept="audio/*" hidden></label><button class="tool-button" id="removeMedia" type="button">クリア</button></div>
+  <div class="preview-stage" id="previewStage"><video id="videoPreview" playsinline preload="metadata"></video><div class="preview-caption" id="captionPreview"></div><div class="placeholder" id="videoPlaceholder">動画を追加すると、ここでプレビューできます。<br>読み込んだ動画は自動アップロードされません。</div></div>
+  <div class="transport"><button class="tool-button" id="playPause" type="button">▶ 再生</button><button class="tool-button" id="seekStart" type="button">↤ 開始位置</button><button class="tool-button" id="seekEnd" type="button">終了位置 ↦</button><span class="timecode" id="timeDisplay">00:00.0 / 00:00.0</span><button class="primary" id="exportVideo" type="button">WebMで書き出す</button></div>
+  <div class="progress"><span id="exportProgress"></span></div><div class="editor-status" id="editorStatus" role="status">まず動画ファイルを選んでください。</div>
+  <div class="timeline-panel panel"><div class="timeline-top"><strong>タイムライン</strong><span class="muted small" id="durationLabel">動画未選択</span></div><div class="timeline-lanes"><div><div class="lane-label">動画</div><div class="track" id="videoTrack"><span class="muted small" style="padding:8px">動画クリップがここに表示されます</span></div></div><div><div class="lane-label">音声</div><div class="track" id="audioTrack"><span class="muted small" style="padding:8px">音楽クリップ（任意）</span></div></div></div>
+  <div class="range-row"><span>開始</span><input id="trimStart" type="range" min="0" max="100" value="0"><span class="timecode" id="startLabel">0.0s</span></div><div class="range-row"><span>終了</span><input id="trimEnd" type="range" min="0" max="100" value="100"><span class="timecode" id="endLabel">0.0s</span></div><div class="range-row"><span>再生位置</span><input id="scrubber" type="range" min="0" max="100" value="0"><span class="timecode" id="scrubLabel">0.0s</span></div></div></section></div>
+  <aside class="panel settings-panel"><h2>編集ツール</h2><div class="setting"><label for="captionText">テキストを重ねる</label><input class="field" id="captionText" maxlength="120" placeholder="タイトルや字幕"></div>
+  <div class="setting"><label for="speed">再生速度 <span id="speedValue">1.0×</span></label><input id="speed" type="range" min="0.5" max="2" step="0.1" value="1"></div>
+  <div class="setting"><label for="brightness">明るさ <span id="brightnessValue">100%</span></label><input id="brightness" type="range" min="50" max="150" value="100"></div>
+  <div class="setting"><label for="contrast">コントラスト <span id="contrastValue">100%</span></label><input id="contrast" type="range" min="50" max="150" value="100"></div>
+  <div class="setting"><label for="saturation">彩度 <span id="saturationValue">100%</span></label><input id="saturation" type="range" min="0" max="200" value="100"></div>
+  <div class="setting"><label for="volume">動画音量 <span id="volumeValue">100%</span></label><input id="volume" type="range" min="0" max="100" value="100"></div>
+  <div class="setting"><label for="quality">書き出し画質</label><select id="quality"><option value="1280">HD（最大1280px）</option><option value="1920">高画質（最大1920px）</option><option value="854">軽量（最大854px）</option></select></div>
+  <button class="tool-button" id="resetVideoSettings" type="button">編集設定をリセット</button><p class="editor-tip">書き出し形式はWebMです。端末・ブラウザーにより対応形式や処理速度が異なります。長い動画は端末の空き容量と性能に注意してください。</p></aside></div></div>`;
+  const video=byId('videoPreview');
+  byId('videoFile').onchange=loadVideo;
+  byId('audioFile').onchange=loadAudio;
+  byId('removeMedia').onclick=clearMedia;
+  byId('playPause').onclick=togglePlayback;
+  byId('seekStart').onclick=()=>seekTo(Number(byId('trimStart').value));
+  byId('seekEnd').onclick=()=>seekTo(Number(byId('trimEnd').value));
+  byId('trimStart').oninput=updateTrimLabels;
+  byId('trimEnd').oninput=updateTrimLabels;
+  byId('scrubber').oninput=()=>{if(video.duration)video.currentTime=Number(byId('scrubber').value)};
+  byId('captionText').oninput=()=>byId('captionPreview').textContent=byId('captionText').value;
+  ['brightness','contrast','saturation'].forEach(id=>byId(id).oninput=updateVideoFilter);
+  byId('speed').oninput=()=>{const speed=Number(byId('speed').value);video.playbackRate=speed;byId('speedValue').textContent=speed.toFixed(1)+'×'};
+  byId('volume').oninput=()=>{video.volume=Number(byId('volume').value)/100;byId('volumeValue').textContent=byId('volume').value+'%'};
+  byId('resetVideoSettings').onclick=resetVideoSettings;
+  byId('exportVideo').onclick=exportVideo;
+  video.ontimeupdate=updateTimeDisplay;
+  video.onloadedmetadata=setupTimeline;
+  video.onended=()=>byId('playPause').textContent='▶ 再生';
+}
+function loadVideo(event){
+  const file=event.target.files&&event.target.files[0];if(!file)return;
+  if(!file.type.startsWith('video/')){setEditorStatus('動画ファイルを選んでください。');return}
+  releaseUrl(videoUrl);videoUrl=URL.createObjectURL(file);
+  const video=byId('videoPreview');video.src=videoUrl;video.load();
+  byId('videoPlaceholder').classList.add('hidden');
+  byId('videoTrack').replaceChildren(makeClip(file.name,'clip'));
+  setEditorStatus('動画を読み込みました。編集は端末内で行われます。');
+}
+function loadAudio(event){
+  const file=event.target.files&&event.target.files[0];if(!file)return;
+  if(!file.type.startsWith('audio/')){setEditorStatus('音声ファイルを選んでください。');return}
+  releaseUrl(audioUrl);audioUrl=URL.createObjectURL(file);
+  byId('audioTrack').replaceChildren(makeClip(file.name,'clip audio-clip'));
+  setEditorStatus('音楽を追加しました。書き出し時に動画と合成します。');
+}
+function makeClip(label,className){const clip=document.createElement('div');clip.className=className;clip.textContent=label;clip.title=label;return clip}
+function releaseUrl(url){if(url)URL.revokeObjectURL(url)}
+function setupTimeline(){
+  const video=byId('videoPreview'),duration=Number.isFinite(video.duration)?video.duration:0;
+  if(!duration){setEditorStatus('この動画の長さを読み込めませんでした。');return}
+  byId('trimStart').max=duration;byId('trimStart').value=0;
+  byId('trimEnd').max=duration;byId('trimEnd').value=duration;
+  byId('scrubber').max=duration;byId('scrubber').value=0;
+  byId('durationLabel').textContent=formatTime(duration);
+  byId('endLabel').textContent=duration.toFixed(1)+'s';
+  updateTimeDisplay();setEditorStatus('動画の準備ができました。開始・終了位置を調整できます。');
+}
+function updateTrimLabels(){
+  const start=Number(byId('trimStart').value),end=Number(byId('trimEnd').value);
+  if(start>=end){byId('trimStart').value=Math.max(0,end-0.1)}
+  byId('startLabel').textContent=Number(byId('trimStart').value).toFixed(1)+'s';
+  byId('endLabel').textContent=Number(byId('trimEnd').value).toFixed(1)+'s';
+}
+function updateTimeDisplay(){
+  const video=byId('videoPreview');if(!video||!Number.isFinite(video.duration))return;
+  byId('timeDisplay').textContent=formatTime(video.currentTime)+' / '+formatTime(video.duration);
+  if(byId('scrubber')){byId('scrubber').value=video.currentTime;byId('scrubLabel').textContent=video.currentTime.toFixed(1)+'s'}
+  if(video.currentTime>=Number(byId('trimEnd')?.value||Infinity)&&!video.paused){video.pause();byId('playPause').textContent='▶ 再生'}
+}
+function formatTime(seconds){if(!Number.isFinite(seconds))return'00:00.0';const min=Math.floor(seconds/60),sec=(seconds%60).toFixed(1).padStart(4,'0');return String(min).padStart(2,'0')+':'+sec}
+function seekTo(time){const video=byId('videoPreview');if(video&&video.src)video.currentTime=time}
+async function togglePlayback(){
+  const video=byId('videoPreview');if(!video||!video.src){setEditorStatus('先に動画を追加してください。');return}
+  if(video.paused){const start=Number(byId('trimStart').value),end=Number(byId('trimEnd').value);if(video.currentTime<start||video.currentTime>=end)video.currentTime=start;try{await video.play();byId('playPause').textContent='❚❚ 一時停止'}catch(error){setEditorStatus('この動画を再生できませんでした。形式を確認してください。')}}
+  else{video.pause();byId('playPause').textContent='▶ 再生'}
+}
+function updateVideoFilter(){
+  const b=Number(byId('brightness').value),c=Number(byId('contrast').value),s=Number(byId('saturation').value);
+  byId('previewStage').style.setProperty('--brightness',b/100);byId('previewStage').style.setProperty('--contrast',c/100);byId('previewStage').style.setProperty('--saturation',s/100);
+  byId('brightnessValue').textContent=b+'%';byId('contrastValue').textContent=c+'%';byId('saturationValue').textContent=s+'%';
+}
+function resetVideoSettings(){
+  byId('captionText').value='';byId('captionPreview').textContent='';byId('speed').value=1;byId('videoPreview').playbackRate=1;byId('speedValue').textContent='1.0×';
+  byId('brightness').value=100;byId('contrast').value=100;byId('saturation').value=100;byId('volume').value=100;byId('videoPreview').volume=1;
+  byId('volumeValue').textContent='100%';updateVideoFilter();
+}
+function setEditorStatus(text){const node=byId('editorStatus');if(node)node.textContent=text}
+async function exportVideo(){
+  const video=byId('videoPreview');if(!video||!video.src){setEditorStatus('先に動画を追加してください。');return}
+  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){setEditorStatus('このブラウザーは動画書き出しに対応していません。別のブラウザーをお試しください。');return}
+  if(mediaRecorder&&mediaRecorder.state==='recording'){setEditorStatus('書き出し中です。');return}
+  const start=Number(byId('trimStart').value),end=Number(byId('trimEnd').value);
+  if(end-start<0.2){setEditorStatus('書き出す範囲を0.2秒以上にしてください。');return}
+  const button=byId('exportVideo');button.disabled=true;byId('exportProgress').style.width='0%';setEditorStatus('書き出し準備中…');
+  const maxSize=Number(byId('quality').value),scale=Math.min(1,maxSize/video.videoWidth,maxSize/video.videoHeight);
+  const canvas=document.createElement('canvas');canvas.width=Math.max(2,Math.floor(video.videoWidth*scale/2)*2);canvas.height=Math.max(2,Math.floor(video.videoHeight*scale/2)*2);
+  const ctx=canvas.getContext('2d');const canvasStream=canvas.captureStream(30);let mixedStream=new MediaStream(canvasStream.getVideoTracks());
+  let sourceStream=null;let musicElement=null;let musicStream=null;let stopped=false;
+  if(typeof video.captureStream==='function'||typeof video.mozCaptureStream==='function'){
+    sourceStream=(video.captureStream||video.mozCaptureStream).call(video);
+    sourceStream.getAudioTracks().forEach(track=>mixedStream.addTrack(track));
+  }
+  if(audioUrl){
+    musicElement=new Audio(audioUrl);musicElement.volume=.8;musicElement.loop=false;
+    if(typeof musicElement.captureStream==='function'){
+      musicStream=musicElement.captureStream();musicStream.getAudioTracks().forEach(track=>mixedStream.addTrack(track));
+    }
+  }
+  const mimeType=MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')?'video/webm;codecs=vp9,opus':MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')?'video/webm;codecs=vp8,opus':'video/webm';
+  try{mediaRecorder=new MediaRecorder(mixedStream,{mimeType,videoBitsPerSecond:Math.min(8000000,canvas.width*canvas.height*5)})}catch(error){button.disabled=false;setEditorStatus('書き出しを開始できませんでした: '+error.message);return}
+  recordedChunks=[];
+  mediaRecorder.ondataavailable=event=>{if(event.data&&event.data.size)recordedChunks.push(event.data)};
+  mediaRecorder.onerror=event=>{setEditorStatus('書き出し中にエラーが発生しました。');finish()};
+  mediaRecorder.onstop=()=>{
+    if(!recordedChunks.length){setEditorStatus('動画を書き出せませんでした。');finish();return}
+    const blob=new Blob(recordedChunks,{type:'video/webm'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download='ruito-edit-'+new Date().toISOString().replace(/[:.]/g,'-')+'.webm';document.body.appendChild(link);link.click();link.remove();
+    setEditorStatus('書き出し完了。WebM動画をダウンロードしました。');setTimeout(()=>URL.revokeObjectURL(url),60000);finish();
+  };
+  function finish(){
+    stopped=true;cancelAnimationFrame(previewAnimation);video.pause();if(musicElement)musicElement.pause();
+    if(sourceStream)sourceStream.getTracks().forEach(t=>t.stop());if(musicStream)musicStream.getTracks().forEach(t=>t.stop());canvasStream.getTracks().forEach(t=>t.stop());
+    button.disabled=false;byId('playPause').textContent='▶ 再生';byId('exportProgress').style.width='100%';
+  }
+  function drawFrame(){
+    if(stopped)return;
+    const b=Number(byId('brightness').value),c=Number(byId('contrast').value),s=Number(byId('saturation').value);
+    ctx.filter=`brightness(${b}%) contrast(${c}%) saturate(${s}%)`;ctx.drawImage(video,0,0,canvas.width,canvas.height);ctx.filter='none';
+    const caption=byId('captionText').value.trim();
+    if(caption){const fontSize=Math.max(20,Math.round(canvas.width*.045));ctx.font=`800 ${fontSize}px system-ui, sans-serif`;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.lineWidth=Math.max(3,fontSize*.15);ctx.strokeStyle='#000';ctx.fillStyle='#fff';const lines=wrapCanvasText(ctx,caption,canvas.width*.9);let y=canvas.height*.09+lines.length*fontSize*1.2;lines.forEach(line=>{ctx.strokeText(line,canvas.width/2,y);ctx.fillText(line,canvas.width/2,y);y+=fontSize*1.2})}
+    const progress=Math.min(100,Math.max(0,(video.currentTime-start)/(end-start)*100));byId('exportProgress').style.width=progress+'%';
+    if(video.currentTime>=end){video.pause();if(mediaRecorder.state==='recording')mediaRecorder.stop();return}
+    previewAnimation=requestAnimationFrame(drawFrame);
+  }
+  try{
+    mediaRecorder.start(250);video.currentTime=start;video.playbackRate=Number(byId('speed').value);video.volume=Number(byId('volume').value)/100;
+    await new Promise(resolve=>{if(Math.abs(video.currentTime-start)<.05&&video.readyState>=2)resolve();else video.addEventListener('seeked',resolve,{once:true})});
+    if(musicElement){try{await musicElement.play()}catch(error){setEditorStatus('音楽を再生できませんでした。動画のみ書き出します。')}}
+    await video.play();setEditorStatus('書き出し中…画面を閉じずにお待ちください。');drawFrame();
+  }catch(error){if(mediaRecorder.state==='recording')mediaRecorder.stop();else finish();setEditorStatus('書き出しに失敗しました: '+(error.message||error))}
+}
+function wrapCanvasText(ctx,text,maxWidth){
+  const output=[];let line='';
+  for(const char of text){if(char==='\n'){output.push(line);line='';continue}const test=line+char;if(line&&ctx.measureText(test).width>maxWidth){output.push(line);line=char}else line=test}
+  if(line)output.push(line);return output.slice(-4);
+}
+function clearMedia(){
+  const video=byId('videoPreview');if(video){video.pause();video.removeAttribute('src');video.load()}
+  releaseUrl(videoUrl);releaseUrl(audioUrl);videoUrl=null;audioUrl=null;
+  if(byId('videoPlaceholder'))byId('videoPlaceholder').classList.remove('hidden');
+  if(byId('videoTrack'))byId('videoTrack').innerHTML='<span class="muted small" style="padding:8px">動画クリップがここに表示されます</span>';
+  if(byId('audioTrack'))byId('audioTrack').innerHTML='<span class="muted small" style="padding:8px">音楽クリップ（任意）</span>';
+  if(byId('durationLabel'))byId('durationLabel').textContent='動画未選択';setEditorStatus('メディアをクリアしました。');
+}
+
+/* Photo editor */
+function renderPhotoEditor(){
+  byId('pageContent').innerHTML=`<div class="page panel photo-app"><div class="page-heading"><h1>写真編集</h1><span class="muted small">編集後はGoogle Driveに保存</span></div><p class="muted">画像を追加し、明るさ・コントラスト・彩度を調整します。</p>
+  <div class="file-row"><input id="photoFile" class="file-input" type="file" accept="image/*"><button class="primary" id="savePhoto" type="button">Driveに保存</button></div>
+  <div class="photo-layout"><div class="canvas-wrap"><p id="emptyPhoto" class="placeholder">ここに画像プレビューが表示されます</p><canvas id="photoCanvas"></canvas></div><div class="photo-controls">
+  <div class="setting"><label>明るさ <span id="photoBrightnessValue">100%</span></label><input id="photoBrightness" type="range" min="30" max="170" value="100"></div>
+  <div class="setting"><label>コントラスト <span id="photoContrastValue">100%</span></label><input id="photoContrast" type="range" min="30" max="170" value="100"></div>
+  <div class="setting"><label>彩度 <span id="photoSaturationValue">100%</span></label><input id="photoSaturation" type="range" min="0" max="200" value="100"></div>
+  <button class="tool-button" id="resetPhoto" type="button">調整をリセット</button></div></div><div class="photo-status" id="photoStatus" role="status"></div></div>`;
+  byId('photoFile').onchange=loadPhoto;
+  ['photoBrightness','photoContrast','photoSaturation'].forEach(id=>byId(id).oninput=drawPhoto);
+  byId('resetPhoto').onclick=resetPhotoFilters;byId('savePhoto').onclick=savePhoto;
+}
+function loadPhoto(event){
+  const file=event.target.files&&event.target.files[0];if(!file)return;
+  if(!file.type.startsWith('image/')){photoStatus('画像ファイルを選んでください。');return}
+  if(file.size>4*1024*1024){photoStatus('画像は4MB以下にしてください。');return}
+  const reader=new FileReader();reader.onload=()=>{const image=new Image();image.onload=()=>{selectedImage={image,name:file.name};byId('emptyPhoto').classList.add('hidden');byId('photoCanvas').style.display='block';drawPhoto();photoStatus('')};image.onerror=()=>photoStatus('画像を読み込めませんでした。');image.src=reader.result};reader.readAsDataURL(file);
+}
+function drawPhoto(){
+  if(!selectedImage)return;const canvas=byId('photoCanvas'),ctx=canvas.getContext('2d');
+  const max=2400,scale=Math.min(1,max/selectedImage.image.naturalWidth,max/selectedImage.image.naturalHeight);
+  canvas.width=Math.max(1,Math.round(selectedImage.image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(selectedImage.image.naturalHeight*scale));
+  const b=byId('photoBrightness').value,c=byId('photoContrast').value,s=byId('photoSaturation').value;
+  byId('photoBrightnessValue').textContent=b+'%';byId('photoContrastValue').textContent=c+'%';byId('photoSaturationValue').textContent=s+'%';
+  ctx.filter=`brightness(${b}%) contrast(${c}%) saturate(${s}%)`;ctx.drawImage(selectedImage.image,0,0,canvas.width,canvas.height);ctx.filter='none';
+}
+function resetPhotoFilters(){if(!selectedImage)return;byId('photoBrightness').value=100;byId('photoContrast').value=100;byId('photoSaturation').value=100;drawPhoto()}
+function photoStatus(text){const node=byId('photoStatus');if(node)node.textContent=text}
+function savePhoto(){
+  if(!selectedImage){photoStatus('先に画像を追加してください。');return}
+  const button=byId('savePhoto');button.disabled=true;photoStatus('保存中…');
+  google.script.run.withSuccessHandler(result=>{
+    button.disabled=false;const status=byId('photoStatus');status.textContent='Driveに保存しました：';const link=document.createElement('a');link.href=result.url;link.target='_blank';link.rel='noopener';link.textContent=result.name;status.appendChild(link);
+  }).withFailureHandler(error=>{button.disabled=false;photoStatus(error.message||String(error))}).saveEditedImage({token,name:selectedImage.name,dataUrl:byId('photoCanvas').toDataURL('image/jpeg',.9)});
+}
+
+/* Dispose temporary browser resources when leaving the editor or closing the page. */
+window.addEventListener('beforeunload',()=>{clearInterval(pollTimer);releaseUrl(videoUrl);releaseUrl(audioUrl);if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop()});
+if(token){
+  google.script.run.withSuccessHandler(state=>{currentUser=state.username;showApp()}).withFailureHandler(()=>{localStorage.removeItem('ruitoToken');token=''}).getAppState(token);
+}
 </script>
 </body>
 </html>
