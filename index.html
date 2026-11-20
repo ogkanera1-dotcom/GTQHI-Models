@@ -4,126 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#050b18;color:white;font-family:Arial,sans-serif;overflow:hidden}
-#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
-.particle{position:absolute;bottom:-20px;background:#168cff;border-radius:50%;box-shadow:0 0 12px #168cff,0 0 25px #087bff;animation:rise linear infinite}
-@keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.9}85%{opacity:.6}100%{transform:translateY(-110vh);opacity:0}}
-.app{position:relative;z-index:1;display:flex;height:100dvh}
-.sidebar{width:230px;padding:22px;background:#091326dd;border-right:1px solid #173b65}
-.logo{font-size:24px;font-weight:bold;color:#40aaff;margin-bottom:35px;text-shadow:0 0 15px #168cff}
-.nav{width:100%;padding:14px;margin-bottom:10px;color:#d8eaff;background:#10213a;border:1px solid #183b60;border-radius:12px;text-align:left;cursor:pointer}
-.nav:hover{background:#17416d}
-.main{flex:1;display:flex;flex-direction:column;min-width:0}
-header{height:70px;flex-shrink:0;padding:22px;border-bottom:1px solid #18395b;font-size:20px;font-weight:bold}
-.content{flex:1;overflow:auto;padding:25px}
-.welcome{text-align:center;margin:12vh auto 35px}
-.welcome h1{font-size:38px;color:#55b7ff;text-shadow:0 0 25px #087bff}
-.welcome p,.muted{color:#8daecc}
-.chat{max-width:750px;margin:auto}
-.message{background:#10233dcc;border:1px solid #205080;padding:14px;border-radius:15px;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}
-.input-area{padding:16px;display:flex;gap:10px;border-top:1px solid #18395b;background:#081326dd}
-input{min-width:0;padding:12px;border-radius:12px;border:1px solid #28629a;background:#0d1d33;color:white;outline:none}
-#message{flex:1;padding:15px}
-button{font:inherit}
-.send,.primary{border:0;border-radius:12px;padding:12px 20px;background:#087bff;color:white;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.55;cursor:wait}
-#other{max-width:900px;margin:0 auto}
-.photo-app{background:#0b1930;border:1px solid #1d4772;border-radius:16px;padding:20px}
-.photo-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px}
-.photo-toolbar input[type=file]{max-width:100%}
-.photo-layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px}
-.canvas-wrap{min-height:320px;display:flex;align-items:center;justify-content:center;background:#050b18;border:1px dashed #28629a;border-radius:12px;overflow:hidden}
-#photoCanvas{display:none;max-width:100%;max-height:58vh;object-fit:contain}
-#emptyPhoto{padding:30px;text-align:center;color:#8daecc}
-.controls{padding:14px;background:#10213a;border-radius:12px}
-.control{margin:0 0 18px}
-.control label{display:flex;justify-content:space-between;margin-bottom:8px;color:#d8eaff}
-.control input{width:100%;padding:0;accent-color:#168cff}
-#photoStatus{min-height:24px;margin-top:14px;white-space:pre-wrap;overflow-wrap:anywhere;color:#b8d9f5}
-#photoStatus a{color:#62bdff}
-#account{font-size:12px;color:#8daecc;margin-top:22px;overflow-wrap:anywhere}
-@media(max-width:700px){.sidebar{width:75px;padding:10px}.logo{font-size:12px;word-break:break-all}.nav{font-size:11px;padding:10px 4px;text-align:center}.content{padding:12px}.welcome h1{font-size:29px}.photo-layout{grid-template-columns:1fr}.canvas-wrap{min-height:240px}}
+*{box-sizing:border-box}body{margin:0;background:#050b18;color:#f4f8ff;font-family:Arial,sans-serif;min-height:100vh}button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+#particles{position:fixed;inset:0;pointer-events:none;overflow:hidden}.particle{position:absolute;bottom:-20px;background:#168cff;border-radius:50%;box-shadow:0 0 12px #168cff;animation:rise linear infinite}@keyframes rise{to{transform:translateY(-110vh);opacity:0}}
+.auth-wrap{position:relative;min-height:100vh;display:grid;place-items:center;padding:20px}.auth-card,.panel{background:#0b1930;border:1px solid #1d4772;border-radius:18px;box-shadow:0 18px 60px #0007}.auth-card{width:min(420px,100%);padding:28px}.logo{color:#55b7ff;font-size:26px;font-weight:bold;text-shadow:0 0 18px #087bff}.muted{color:#91abc8}.auth-card label{display:block;margin:14px 0 6px}.field{width:100%;padding:12px;border:1px solid #28629a;border-radius:10px;background:#0d1d33;color:white}.primary{border:0;border-radius:10px;padding:12px 18px;background:#087bff;color:white;font-weight:bold}.auth-card .primary{width:100%;margin-top:16px}.link-button{border:0;background:none;color:#68bdff;text-decoration:underline;padding:10px 0}.status{min-height:22px;margin-top:12px;color:#ffb5b5;white-space:pre-wrap}
+.app{position:relative;display:flex;min-height:100vh}.sidebar{width:220px;flex-shrink:0;padding:20px;background:#091326;border-right:1px solid #173b65}.sidebar .logo{margin-bottom:26px}.nav{width:100%;padding:12px;margin:5px 0;color:#d8eaff;background:#10213a;border:1px solid #183b60;border-radius:10px;text-align:left}.nav:hover,.nav.active{background:#17416d}.profile{margin-top:20px;padding-top:16px;border-top:1px solid #173b65;color:#9eb8d3;font-size:13px;overflow-wrap:anywhere}.main{flex:1;min-width:0;display:flex;flex-direction:column}.topbar{height:64px;flex-shrink:0;padding:20px 24px;border-bottom:1px solid #18395b;font-weight:bold}.content{flex:1;min-height:0;padding:20px;overflow:auto}.chat-layout{max-width:1200px;height:min(75vh,760px);min-height:430px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:14px}.chat-panel,.players-panel{display:flex;flex-direction:column;min-height:0}.panel-title{padding:16px;border-bottom:1px solid #1c3e62;font-weight:bold}.messages{flex:1;min-height:0;overflow-y:auto;padding:14px;scrollbar-color:#28629a #0b1930}.message{padding:11px 13px;margin:9px 0;background:#10233d;border:1px solid #205080;border-radius:12px;overflow-wrap:anywhere;white-space:pre-wrap}.message-meta{font-size:12px;color:#79bcf1;margin-bottom:5px}.message-time{color:#8199b2;margin-left:8px}.composer{display:flex;gap:9px;padding:12px;border-top:1px solid #1c3e62}.composer input{flex:1;min-width:0}.send{border:0;border-radius:10px;padding:0 18px;background:#087bff;color:white;font-weight:bold}.stats{display:flex;gap:8px;padding:12px}.stat{flex:1;text-align:center;padding:10px;background:#10213a;border-radius:10px;color:#a9c5e1}.stat strong{display:block;color:white;font-size:20px}.player-list{overflow-y:auto;padding:8px 12px;scrollbar-color:#28629a #0b1930}.player{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid #18314e;overflow-wrap:anywhere}.dot{width:9px;height:9px;border-radius:50%;background:#32d583;box-shadow:0 0 8px #32d583;flex-shrink:0}.offline{background:#67778c;box-shadow:none}.empty{text-align:center;color:#8daecc;padding:28px}.photo-app{max-width:950px;margin:auto;padding:20px}.photo-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.photo-layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:16px}.canvas-wrap{min-height:300px;display:flex;align-items:center;justify-content:center;background:#050b18;border:1px dashed #28629a;border-radius:12px;overflow:hidden}#photoCanvas{display:none;max-width:100%;max-height:58vh;object-fit:contain}#emptyPhoto{padding:25px;text-align:center;color:#8daecc}.controls{padding:14px;background:#10213a;border-radius:12px}.control{margin:0 0 18px}.control label{display:flex;justify-content:space-between;margin-bottom:8px}.control input{width:100%;accent-color:#168cff}#photoStatus{min-height:24px;margin-top:12px;overflow-wrap:anywhere}#photoStatus a{color:#62bdff}
+@media(max-width:760px){.sidebar{width:72px;padding:10px}.sidebar .logo{font-size:12px;word-break:break-all;margin:6px 0 20px}.nav{font-size:11px;text-align:center;padding:9px 3px}.profile{font-size:10px}.chat-layout{grid-template-columns:1fr;height:calc(100vh - 120px);min-height:440px}.players-panel{max-height:180px}.content{padding:10px}.photo-layout{grid-template-columns:1fr}.canvas-wrap{min-height:220px}}
 </style>
 </head>
 <body>
 <div id="particles"></div>
-<div class="app">
-  <aside class="sidebar">
-    <div class="logo">🤖 ルイトAI</div>
-    <button class="nav" onclick="showPage('chat')">💬 チャット</button>
-    <button class="nav" onclick="showPage('friends')">👥 フレンド</button>
-    <button class="nav" onclick="showPage('photos')">🖼 写真編集</button>
-    <button class="nav" onclick="showPage('games')">🎮 ゲーム</button>
-    <button class="nav" onclick="showPage('settings')">⚙ 設定</button>
-    <div id="account">アカウント確認中…</div>
-  </aside>
-  <main class="main">
-    <header id="pageTitle">💬 チャット</header>
-    <section class="content">
-      <div id="welcome" class="welcome"><h1>Welcome to RUITO AI</h1><p>未来のコミュニケーションを、ここから。</p></div>
-      <div id="chat" class="chat"></div>
-      <div id="other"></div>
-    </section>
-    <div class="input-area" id="inputArea"><input id="message" placeholder="メッセージを入力..."><button class="send" onclick="sendMessage()">送信</button></div>
-  </main>
-</div>
+<div id="authView" class="auth-wrap"><div class="auth-card"><div class="logo">🤖 ルイトAI</div><h2 id="authTitle">ログイン</h2><p class="muted">アカウントでチャットに参加しよう</p>
+  <form id="authForm"><label for="username">ユーザー名</label><input class="field" id="username" autocomplete="username" minlength="3" maxlength="20" required>
+    <label for="password">パスワード</label><input class="field" id="password" type="password" autocomplete="current-password" minlength="8" maxlength="200" required>
+    <div id="confirmWrap" class="hidden"><label for="confirmPassword">パスワード（確認）</label><input class="field" id="confirmPassword" type="password" autocomplete="new-password" minlength="8" maxlength="200"></div>
+    <button class="primary" id="authSubmit" type="submit">ログイン</button></form>
+  <button class="link-button" id="toggleAuth" type="button">新規登録はこちら</button><div class="status" id="authStatus"></div>
+  <p class="muted" style="font-size:12px">デモ版：ユーザー名とパスワードはこのアプリ用です。大切なパスワードは使わないでください。</p></div></div>
+<div id="appView" class="app hidden"><aside class="sidebar"><div class="logo">🤖 ルイトAI</div><button class="nav active" data-page="chat">💬 チャット</button><button class="nav" data-page="photos">🖼 写真編集</button><div class="profile"><div id="profileName"></div><button class="link-button" id="logout">ログアウト</button></div></aside>
+<main class="main"><header class="topbar" id="pageTitle">💬 オンラインチャット</header><section class="content" id="pageContent"></section></main></div>
 <script>
-const particleArea=document.getElementById("particles");
-for(let i=0;i<45;i++){const p=document.createElement("div");p.className="particle";const size=Math.random()*4+2;p.style.width=size+"px";p.style.height=size+"px";p.style.left=Math.random()*100+"%";p.style.animationDuration=(Math.random()*12+7)+"s";p.style.animationDelay=(-Math.random()*15)+"s";particleArea.appendChild(p)}
-
-let selectedImage=null;
-let photoUrl=null;
-function sendMessage(){const input=document.getElementById("message");const value=input.value.trim();if(!value)return;const msg=document.createElement("div");msg.className="message";msg.textContent="あなた： "+value;document.getElementById("chat").appendChild(msg);input.value=""}
-document.getElementById("message").addEventListener("keydown",e=>{if(e.key==="Enter")sendMessage()});
-function showPage(page){
-  const names={chat:"💬 チャット",friends:"👥 フレンド",photos:"🖼 写真編集",games:"🎮 ゲーム",settings:"⚙ 設定"};
-  document.getElementById("pageTitle").textContent=names[page];
-  document.getElementById("welcome").style.display=page==="chat"?"block":"none";
-  document.getElementById("chat").style.display=page==="chat"?"block":"none";
-  document.getElementById("inputArea").style.display=page==="chat"?"flex":"none";
-  const other=document.getElementById("other");
-  if(page==="photos"){renderPhotoEditor();return}
-  other.replaceChildren();
-  if(page!=="chat"){const note=document.createElement("div");note.className="message";note.textContent="「"+names[page]+"」機能は開発準備中です。";other.appendChild(note)}
-}
-function renderPhotoEditor(){
-  const other=document.getElementById("other");
-  other.innerHTML=`<div class="photo-app">
-    <h2>写真編集</h2><p class="muted">画像を選び、明るさ・コントラストを調整してGoogle Driveに保存できます。</p>
-    <div class="photo-toolbar"><input id="photoFile" type="file" accept="image/*"><button class="primary" id="savePhoto">編集した画像をDriveに保存</button></div>
-    <div class="photo-layout"><div class="canvas-wrap"><p id="emptyPhoto">ここに画像プレビューが表示されます</p><canvas id="photoCanvas"></canvas></div>
-    <div class="controls"><div class="control"><label for="brightness">明るさ <span id="brightnessValue">100%</span></label><input id="brightness" type="range" min="30" max="170" value="100"></div>
-    <div class="control"><label for="contrast">コントラスト <span id="contrastValue">100%</span></label><input id="contrast" type="range" min="30" max="170" value="100"></div>
-    <button class="nav" type="button" onclick="resetPhotoFilters()">調整をリセット</button></div></div><div id="photoStatus"></div></div>`;
-  document.getElementById("photoFile").addEventListener("change",loadPhoto);
-  document.getElementById("brightness").addEventListener("input",drawPhoto);
-  document.getElementById("contrast").addEventListener("input",drawPhoto);
-  document.getElementById("savePhoto").addEventListener("click",savePhoto);
-}
-function loadPhoto(event){
-  const file=event.target.files&&event.target.files[0];if(!file)return;
-  if(!file.type.startsWith("image/")){setPhotoStatus("画像ファイルを選んでください。");return}
-  if(file.size>4*1024*1024){setPhotoStatus("画像は4MB以下にしてください。");event.target.value="";return}
-  const reader=new FileReader();reader.onload=()=>{const image=new Image();image.onload=()=>{selectedImage={image,name:file.name};document.getElementById("emptyPhoto").style.display="none";document.getElementById("photoCanvas").style.display="block";drawPhoto();setPhotoStatus("")};image.onerror=()=>setPhotoStatus("画像を読み込めませんでした。");image.src=reader.result};reader.readAsDataURL(file);
-}
-function drawPhoto(){
-  if(!selectedImage)return;
-  const canvas=document.getElementById("photoCanvas"),ctx=canvas.getContext("2d");
-  canvas.width=selectedImage.image.naturalWidth;canvas.height=selectedImage.image.naturalHeight;
-  const brightness=document.getElementById("brightness").value,contrast=document.getElementById("contrast").value;
-  document.getElementById("brightnessValue").textContent=brightness+"%";document.getElementById("contrastValue").textContent=contrast+"%";
-  ctx.filter=`brightness(${brightness}%) contrast(${contrast}%)`;ctx.drawImage(selectedImage.image,0,0);ctx.filter="none";
-}
-function resetPhotoFilters(){if(!selectedImage)return;document.getElementById("brightness").value=100;document.getElementById("contrast").value=100;drawPhoto()}
-function savePhoto(){
-  if(!selectedImage){setPhotoStatus("先に画像を追加してください。");return}
-  const button=document.getElementById("savePhoto");button.disabled=true;setPhotoStatus("保存中…");
-  const dataUrl=document.getElementById("photoCanvas").toDataURL("image/jpeg",0.9);
-  google.script.run.withSuccessHandler(result=>{button.disabled=false;const status=document.getElementById("photoStatus");status.textContent="Driveに保存しました：";const link=document.createElement("a");link.href=result.url;link.target="_blank";link.rel="noopener";link.textContent=result.name;status.appendChild(link)}).withFailureHandler(error=>{button.disabled=false;setPhotoStatus("保存に失敗しました: "+(error.message||error))}).saveEditedImage({name:selectedImage.name,dataUrl});
-}
-function setPhotoStatus(message){const status=document.getElementById("photoStatus");if(status)status.textContent=message}
-google.script.run.withSuccessHandler(email=>{document.getElementById("account").textContent="Googleアカウント: "+email}).withFailureHandler(()=>{document.getElementById("account").textContent="Googleアカウントで利用"}).getCurrentUser();
+const particleArea=document.getElementById('particles');for(let i=0;i<32;i++){const p=document.createElement('i');p.className='particle';const size=2+Math.random()*4;p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;animation-duration:${8+Math.random()*12}s;animation-delay:${-Math.random()*15}s`;particleArea.appendChild(p)}
+let registering=false,token=localStorage.getItem('ruitoToken')||'',currentUser='',pollTimer=null,selectedImage=null;
+const authForm=document.getElementById('authForm'),authStatus=document.getElementById('authStatus');
+document.getElementById('toggleAuth').onclick=()=>{registering=!registering;document.getElementById('authTitle').textContent=registering?'新規登録':'ログイン';document.getElementById('authSubmit').textContent=registering?'アカウントを作成':'ログイン';document.getElementById('toggleAuth').textContent=registering?'ログインはこちら':'新規登録はこちら';document.getElementById('confirmWrap').classList.toggle('hidden',!registering);document.getElementById('password').autocomplete=registering?'new-password':'current-password';authStatus.textContent=''};
+authForm.onsubmit=e=>{e.preventDefault();const name=document.getElementById('username').value.trim(),pass=document.getElementById('password').value,confirm=document.getElementById('confirmPassword').value;if(registering&&pass!==confirm){authStatus.textContent='確認用パスワードが一致しません。';return}const button=document.getElementById('authSubmit');button.disabled=true;authStatus.textContent='処理中…';const done=session=>{button.disabled=false;token=session.token;currentUser=session.username;localStorage.setItem('ruitoToken',token);showApp()};const fail=err=>{button.disabled=false;authStatus.textContent=err.message||String(err)};if(registering)google.script.run.withSuccessHandler(done).withFailureHandler(fail).registerAccount(name,pass);else google.script.run.withSuccessHandler(done).withFailureHandler(fail).loginAccount(name,pass)};
+function showApp(){document.getElementById('authView').classList.add('hidden');document.getElementById('appView').classList.remove('hidden');document.getElementById('profileName').textContent='ログイン中：'+currentUser;showPage('chat');refreshState();clearInterval(pollTimer);pollTimer=setInterval(refreshState,8000)}
+function doLogout(){const old=token;token='';localStorage.removeItem('ruitoToken');clearInterval(pollTimer);google.script.run.logoutAccount(old);document.getElementById('appView').classList.add('hidden');document.getElementById('authView').classList.remove('hidden')}
+document.getElementById('logout').onclick=doLogout;
+function refreshState(){if(!token)return;google.script.run.withSuccessHandler(state=>{currentUser=state.username;document.getElementById('profileName').textContent='ログイン中：'+currentUser;if(document.getElementById('chatMessages'))renderMessages(state.messages);if(document.getElementById('playerList'))renderPlayers(state)}).withFailureHandler(()=>{if(token)doLogout()}).getAppState(token)}
+function showPage(page){document.querySelectorAll('.nav[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));document.getElementById('pageTitle').textContent=page==='chat'?'💬 オンラインチャット':'🖼 写真編集';const root=document.getElementById('pageContent');if(page==='chat')renderChat();else renderPhotoEditor()}
+function renderChat(){document.getElementById('pageContent').innerHTML=`<div class="chat-layout"><section class="panel chat-panel"><div class="panel-title">みんなのチャット <span class="muted" style="font-size:12px">自動更新</span></div><div class="messages" id="chatMessages" aria-live="polite"></div><form class="composer" id="chatForm"><input class="field" id="chatInput" maxlength="500" placeholder="メッセージを入力…" autocomplete="off"><button class="send" type="submit">送信</button></form></section><aside class="panel players-panel"><div class="panel-title">プレイヤー</div><div class="stats"><div class="stat">全登録<strong id="playerCount">0</strong></div><div class="stat">オンライン<strong id="onlineCount">0</strong></div></div><div class="player-list" id="playerList"></div></aside></div>`;document.getElementById('chatForm').onsubmit=e=>{e.preventDefault();const input=document.getElementById('chatInput'),text=input.value.trim();if(!text)return;input.disabled=true;google.script.run.withSuccessHandler(()=>{input.value='';input.disabled=false;input.focus();refreshState()}).withFailureHandler(err=>{input.disabled=false;alert(err.message||String(err))}).sendChatMessage(token,text)}}
+function renderMessages(messages){const box=document.getElementById('chatMessages');if(!box)return;const nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<80;box.replaceChildren();if(!messages.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='まだメッセージはありません。最初のメッセージを送ろう！';box.appendChild(empty)}messages.forEach(m=>{const item=document.createElement('article');item.className='message';const meta=document.createElement('div');meta.className='message-meta';meta.textContent=m.username;const time=document.createElement('time');time.className='message-time';time.textContent=new Date(m.time).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});meta.appendChild(time);const text=document.createElement('div');text.textContent=m.text;item.append(meta,text);box.appendChild(item)});if(nearBottom)box.scrollTop=box.scrollHeight}
+function renderPlayers(state){const count=document.getElementById('playerCount'),onlineCount=document.getElementById('onlineCount'),list=document.getElementById('playerList');if(!list)return;count.textContent=state.playerCount;onlineCount.textContent=state.onlineCount;list.replaceChildren();if(!state.onlinePlayers.length){const empty=document.createElement('div');empty.className='empty';empty.textContent='オンラインのプレイヤーはいません';list.appendChild(empty);return}state.onlinePlayers.forEach(name=>{const row=document.createElement('div');row.className='player';const dot=document.createElement('span');dot.className='dot';const label=document.createElement('span');label.textContent=name+(name===currentUser?'（あなた）':'');row.append(dot,label);list.appendChild(row)})}
+function renderPhotoEditor(){document.getElementById('pageContent').innerHTML=`<div class="panel photo-app"><h2>写真編集</h2><p class="muted">画像を選び、明るさ・コントラストを調整してDriveに保存できます。</p><div class="photo-toolbar"><input id="photoFile" type="file" accept="image/*"><button class="primary" id="savePhoto">編集した画像をDriveに保存</button></div><div class="photo-layout"><div class="canvas-wrap"><p id="emptyPhoto">ここに画像プレビューが表示されます</p><canvas id="photoCanvas"></canvas></div><div class="controls"><div class="control"><label>明るさ <span id="brightnessValue">100%</span></label><input id="brightness" type="range" min="30" max="170" value="100"></div><div class="control"><label>コントラスト <span id="contrastValue">100%</span></label><input id="contrast" type="range" min="30" max="170" value="100"></div><button class="nav" type="button" id="resetFilters">調整をリセット</button></div></div><div id="photoStatus"></div></div>`;document.getElementById('photoFile').onchange=loadPhoto;document.getElementById('brightness').oninput=drawPhoto;document.getElementById('contrast').oninput=drawPhoto;document.getElementById('resetFilters').onclick=resetPhotoFilters;document.getElementById('savePhoto').onclick=savePhoto}
+function loadPhoto(e){const file=e.target.files&&e.target.files[0];if(!file)return;if(!file.type.startsWith('image/')){photoStatus('画像ファイルを選んでください。');return}if(file.size>4*1024*1024){photoStatus('画像は4MB以下にしてください。');return}const reader=new FileReader();reader.onload=()=>{const image=new Image();image.onload=()=>{selectedImage={image,name:file.name};document.getElementById('emptyPhoto').classList.add('hidden');document.getElementById('photoCanvas').style.display='block';drawPhoto()};image.src=reader.result};reader.readAsDataURL(file)}
+function drawPhoto(){if(!selectedImage)return;const canvas=document.getElementById('photoCanvas'),ctx=canvas.getContext('2d');canvas.width=selectedImage.image.naturalWidth;canvas.height=selectedImage.image.naturalHeight;const b=document.getElementById('brightness').value,c=document.getElementById('contrast').value;document.getElementById('brightnessValue').textContent=b+'%';document.getElementById('contrastValue').textContent=c+'%';ctx.filter=`brightness(${b}%) contrast(${c}%)`;ctx.drawImage(selectedImage.image,0,0);ctx.filter='none'}
+function resetPhotoFilters(){if(!selectedImage)return;document.getElementById('brightness').value=100;document.getElementById('contrast').value=100;drawPhoto()}
+function photoStatus(text){const node=document.getElementById('photoStatus');if(node)node.textContent=text}
+function savePhoto(){if(!selectedImage){photoStatus('先に画像を追加してください。');return}const button=document.getElementById('savePhoto');button.disabled=true;photoStatus('保存中…');google.script.run.withSuccessHandler(result=>{button.disabled=false;const status=document.getElementById('photoStatus');status.textContent='Driveに保存しました：';const link=document.createElement('a');link.href=result.url;link.target='_blank';link.rel='noopener';link.textContent=result.name;status.appendChild(link)}).withFailureHandler(err=>{button.disabled=false;photoStatus(err.message||String(err))}).saveEditedImage({token,name:selectedImage.name,dataUrl:document.getElementById('photoCanvas').toDataURL('image/jpeg',.9)})}
+document.querySelectorAll('.nav[data-page]').forEach(button=>button.onclick=()=>showPage(button.dataset.page));
+if(token)google.script.run.withSuccessHandler(session=>{currentUser=session.username;showApp()}).withFailureHandler(()=>{localStorage.removeItem('ruitoToken');token=''}).getAppState(token);
 </script>
 </body>
 </html>
